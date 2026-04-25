@@ -33,6 +33,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ../manage_routes.php?error=Failed to add route.");
         }
         $stmt->close();
+        exit();
+    }
+    elseif ($action === 'edit_route') {
+        $route_id = $_POST['route_id'] ?? 0;
+        $toda_name = $_POST['toda_name'] ?? '';
+        $base_fare = $_POST['base_fare'] ?? 0;
+        $per_km_fare = $_POST['per_km_fare'] ?? 0;
+        $terminal_lat = $_POST['terminal_lat'] ?? null;
+        $terminal_lng = $_POST['terminal_lng'] ?? null;
+
+        if (empty($toda_name) || $route_id == 0) {
+            header("Location: ../manage_routes.php?error=Invalid route data.");
+            exit();
+        }
+
+        if ($terminal_lat && $terminal_lng) {
+            $stmt = $conn->prepare("UPDATE routes SET toda_name = ?, terminal_lat = ?, terminal_lng = ?, base_fare = ?, per_km_fare = ? WHERE id = ?");
+            $stmt->bind_param("sddddi", $toda_name, $terminal_lat, $terminal_lng, $base_fare, $per_km_fare, $route_id);
+        } else {
+            $stmt = $conn->prepare("UPDATE routes SET toda_name = ?, base_fare = ?, per_km_fare = ? WHERE id = ?");
+            $stmt->bind_param("sddi", $toda_name, $base_fare, $per_km_fare, $route_id);
+        }
+
+        if ($stmt->execute()) {
+            header("Location: ../manage_routes.php?success=Route updated successfully.");
+        } else {
+            header("Location: ../manage_routes.php?error=Failed to update route.");
+        }
+        $stmt->close();
+        exit();
     }
     elseif ($action === 'delete_route') {
         $route_id = $_POST['route_id'] ?? 0;
@@ -46,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ../manage_routes.php?error=Failed to delete route.");
         }
         $stmt->close();
+        exit();
     }
     elseif ($action === 'add_stop') {
         $route_id = $_POST['route_id'] ?? 0;
@@ -67,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ../manage_stops.php?route_id=$route_id&error=Failed to add stop.");
         }
         $stmt->close();
+        exit();
     }
     elseif ($action === 'delete_stop') {
         $stop_id = $_POST['stop_id'] ?? 0;
@@ -81,12 +113,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ../manage_stops.php?route_id=$route_id&error=Failed to delete stop.");
         }
         $stmt->close();
+        exit();
     }
     else {
         header("Location: ../manage_routes.php");
+        exit();
     }
 } else {
     header("Location: ../manage_routes.php");
+    exit();
 }
 $conn->close();
 ?>

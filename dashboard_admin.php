@@ -27,6 +27,20 @@ $stopCount = $conn->query("SELECT COUNT(*) as c FROM stops")->fetch_assoc()['c']
 
 // Fetch recent users
 $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC LIMIT 5");
+
+// Fetch unread feedback count
+$unreadFeedbackCount = $conn->query("SELECT COUNT(*) as c FROM reviews WHERE is_read = 0")->fetch_assoc()['c'];
+
+// Fetch recent feedback
+$recentFeedback = $conn->query("SELECT r.*, rt.toda_name, u.username FROM reviews r LEFT JOIN routes rt ON r.route_id = rt.id LEFT JOIN users u ON r.user_id = u.id ORDER BY r.created_at DESC LIMIT 5");
+
+// Fetch settings
+$settings = [];
+$settingsResult = $conn->query("SELECT setting_key, setting_value FROM settings");
+while($row = $settingsResult->fetch_assoc()) {
+    $settings[$row['setting_key']] = $row['setting_value'];
+}
+$pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,6 +94,9 @@ $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM u
                 </a>
                 <a href="feedback.php" class="nav-link" id="navFeedback">
                     <span class="nav-icon">💬</span> Feedback
+                    <?php if($unreadFeedbackCount > 0): ?>
+                        <span class="nav-badge" style="background:#f87171; color:white; font-size:0.65rem; padding:2px 6px; border-radius:10px; margin-left:auto; font-weight:700;"><?php echo $unreadFeedbackCount; ?></span>
+                    <?php endif; ?>
                 </a>
             </nav>
             
@@ -133,8 +150,8 @@ $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM u
                     <a href="feedback.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon purple">💬</div>
                         <div class="stat-info">
-                            <h3>Reviews</h3>
-                            <p>Feedback</p>
+                            <h3><?php echo $unreadFeedbackCount; ?></h3>
+                            <p>New Reviews</p>
                         </div>
                     </a>
                 </div>
@@ -146,6 +163,55 @@ $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM u
                     </div>
                     <div class="card-body" style="padding:0;">
                         <div id="map"></div>
+                    </div>
+                </div>
+
+                <!-- Recent Feedback Table -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>💬 Recent User Feedback</h3>
+                        <a href="feedback.php" class="btn btn-primary" style="padding:8px 20px;font-size:0.85rem;">Manage Feedback</a>
+                    </div>
+                    <div class="card-body" style="padding:0;overflow-x:auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Driver/Route</th>
+                                    <th>Rating</th>
+                                    <th>Comment</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if($recentFeedback->num_rows > 0): ?>
+                                    <?php while ($row = $recentFeedback->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><strong><?php echo htmlspecialchars($row['username']); ?></strong></td>
+                                        <td>
+                                            <small><?php echo htmlspecialchars($row['driver_name'] ?: 'N/A'); ?></small>
+                                            <small style="display:block; color:#666;"><?php echo htmlspecialchars($row['toda_name']); ?></small>
+                                        </td>
+                                        <td style="color:var(--yellow);">
+                                            <?php echo str_repeat('★', $row['rating']); ?>
+                                        </td>
+                                        <td><small><?php echo htmlspecialchars(substr($row['comment'], 0, 50)) . (strlen($row['comment']) > 50 ? '...' : ''); ?></small></td>
+                                        <td>
+                                            <?php if($row['is_read'] == 0): ?>
+                                                <span class="badge badge-pending">New</span>
+                                            <?php else: ?>
+                                                <span class="badge badge-active">Read</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="5" style="text-align:center; padding:20px;">No feedback received yet.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -180,6 +246,25 @@ $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM u
                                 <?php endwhile; ?>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- System Settings -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>⚙️ System Settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <?php if(isset($_GET['settings_success'])) echo "<div class='alert success' style='display:block'>Settings updated!</div>"; ?>
+                        <form action="php/settings_action.php" method="POST">
+                            <div class="form-group" style="display:flex; align-items:center; gap:15px;">
+                                <label style="margin-bottom:0; cursor:pointer;">
+                                    <input type="checkbox" name="pwd_discount_enabled" value="1" <?php echo $pwdEnabled == '1' ? 'checked' : ''; ?>>
+                                    Enable PWD / Student / Senior Discount (20%)
+                                </label>
+                                <button type="submit" class="btn btn-primary" style="padding:6px 15px; font-size:0.8rem;">Save Changes</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 

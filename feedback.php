@@ -16,10 +16,17 @@ require_once 'php/db_connect.php';
 
 $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC");
 
-$reviews = $conn->prepare("SELECT r.*, rt.toda_name FROM reviews r LEFT JOIN routes rt ON r.route_id = rt.id WHERE r.user_id = ? ORDER BY r.created_at DESC");
-$reviews->bind_param("i", $user_id);
-$reviews->execute();
-$my_reviews = $reviews->get_result();
+if ($role === 'admin') {
+    $reviews = $conn->query("SELECT r.*, rt.toda_name, u.username as reviewer_name FROM reviews r LEFT JOIN routes rt ON r.route_id = rt.id LEFT JOIN users u ON r.user_id = u.id ORDER BY r.created_at DESC");
+    $my_reviews = $reviews;
+    // Mark as read when admin visits
+    $conn->query("UPDATE reviews SET is_read = 1 WHERE is_read = 0");
+} else {
+    $reviews = $conn->prepare("SELECT r.*, rt.toda_name FROM reviews r LEFT JOIN routes rt ON r.route_id = rt.id WHERE r.user_id = ? ORDER BY r.created_at DESC");
+    $reviews->bind_param("i", $user_id);
+    $reviews->execute();
+    $my_reviews = $reviews->get_result();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -103,7 +110,8 @@ $my_reviews = $reviews->get_result();
                 if(isset($_GET['success'])) echo "<div class='alert success' style='display:block'>".htmlspecialchars($_GET['success'])."</div>";
                 if(isset($_GET['error'])) echo "<div class='alert error' style='display:block'>".htmlspecialchars($_GET['error'])."</div>";
                 ?>
-                <div class="stats-grid" style="grid-template-columns: 1fr 2fr;">
+                <div class="stats-grid" style="grid-template-columns: <?php echo $role === 'admin' ? '1fr' : '1fr 2fr'; ?>;">
+                    <?php if ($role !== 'admin'): ?>
                     <!-- Rate Form -->
                     <div class="content-card">
                         <div class="card-header">
@@ -145,11 +153,12 @@ $my_reviews = $reviews->get_result();
                             </form>
                         </div>
                     </div>
+                    <?php endif; ?>
 
                     <!-- My Reviews -->
                     <div class="content-card">
                         <div class="card-header">
-                            <h3>My Submitted Reviews</h3>
+                            <h3><?php echo $role === 'admin' ? 'All User Feedback' : 'My Submitted Reviews'; ?></h3>
                         </div>
                         <div class="card-body" style="padding:0;">
                             <table class="data-table">
@@ -169,6 +178,9 @@ $my_reviews = $reviews->get_result();
                                             <td>
                                                 <strong style="display:block;"><?php echo htmlspecialchars($row['driver_name'] ?: 'Unknown Driver'); ?></strong>
                                                 <small style="color:#666;"><?php echo htmlspecialchars($row['toda_name']); ?></small>
+                                                <?php if($role === 'admin'): ?>
+                                                    <small style="display:block; color:var(--primary); font-size:0.75rem;">By: <?php echo htmlspecialchars($row['reviewer_name']); ?></small>
+                                                <?php endif; ?>
                                             </td>
                                             <td style="color:var(--yellow); font-size:1.2rem;">
                                                 <?php echo str_repeat('★', $row['rating']) . str_repeat('☆', 5 - $row['rating']); ?>
@@ -178,7 +190,7 @@ $my_reviews = $reviews->get_result();
                                         <?php endwhile; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="4" style="text-align:center; padding:20px;">You haven't submitted any reviews yet.</td>
+                                            <td colspan="4" style="text-align:center; padding:20px;">No reviews found.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>

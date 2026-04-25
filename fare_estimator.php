@@ -20,6 +20,9 @@ $routesData = [];
 while ($row = $routes->fetch_assoc()) {
     $routesData[] = $row;
 }
+
+// Fetch PWD settings
+$pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'pwd_discount_enabled'")->fetch_assoc()['setting_value'] ?? '0';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -129,6 +132,13 @@ while ($row = $routes->fetch_assoc()) {
                                     <input type="number" step="0.1" min="0" id="distance_km" class="form-control" placeholder="e.g. 2.5">
                                     <small style="color:#666; margin-top:5px; display:block;">Enter distance manually, or click on the map to calculate distance from terminal.</small>
                                 </div>
+
+                                <?php if($pwdEnabled == '1'): ?>
+                                <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:15px; background:#f9fafb; padding:10px; border-radius:8px;">
+                                    <input type="checkbox" id="is_pwd" style="width:20px; height:20px; cursor:pointer;">
+                                    <label for="is_pwd" style="margin-bottom:0; cursor:pointer; font-size:0.9rem; font-weight:600;">PWD / Senior / Student (20% Discount)</label>
+                                </div>
+                                <?php endif; ?>
                                 
                                 <button type="button" id="calcBtn" class="btn btn-primary auth-btn" style="width:100%; margin-top:10px;">Calculate Fare</button>
                             </form>
@@ -180,6 +190,7 @@ while ($row = $routes->fetch_assoc()) {
             const fareResultBox = document.getElementById('fareResultBox');
             const fareAmount = document.getElementById('fareAmount');
             const fareBreakdown = document.getElementById('fareBreakdown');
+            const isPwdCheck = document.getElementById('is_pwd');
 
             // Haversine formula to calculate distance in km
             function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -272,8 +283,15 @@ while ($row = $routes->fetch_assoc()) {
                     totalFare += (extraKm * perKmFare);
                 }
 
+                let discountText = "";
+                if (isPwdCheck && isPwdCheck.checked) {
+                    const discount = totalFare * 0.20;
+                    totalFare -= discount;
+                    discountText = ` | Discount (20%): -₱${discount.toFixed(2)}`;
+                }
+
                 fareAmount.textContent = `₱${totalFare.toFixed(2)}`;
-                fareBreakdown.textContent = `Base Fare: ₱${baseFare.toFixed(2)} (1st KM) + ₱${(extraKm * perKmFare).toFixed(2)} (${extraKm.toFixed(2)} KM extra)`;
+                fareBreakdown.textContent = `Base Fare: ₱${baseFare.toFixed(2)} (1st KM) + ₱${(extraKm * perKmFare).toFixed(2)} (${extraKm.toFixed(2)} KM extra)${discountText}`;
                 fareResultBox.style.display = 'block';
             });
         });

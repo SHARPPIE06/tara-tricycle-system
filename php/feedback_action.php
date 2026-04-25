@@ -9,7 +9,13 @@ if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $user_id = $_SESSION['user_id'];
+$role = $_SESSION['role'] ?? 'user';
 $action = $_POST['action'] ?? '';
+
+if ($role === 'admin') {
+    header("Location: ../feedback.php?error=Admins cannot submit feedback.");
+    exit();
+}
 
 if ($action === 'submit') {
     $rating = intval($_POST['rating'] ?? 5);

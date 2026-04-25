@@ -92,11 +92,12 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                     <!-- Add New Route Form -->
                     <div class="content-card" style="margin-bottom:0;">
                         <div class="card-header">
-                            <h3>➕ Add New TODA / Route</h3>
+                            <h3 id="formTitle">➕ Add New TODA / Route</h3>
                         </div>
                         <div class="card-body">
                             <form action="php/route_action.php" method="POST" id="routeForm">
-                                <input type="hidden" name="action" value="add_route">
+                                <input type="hidden" name="action" id="formAction" value="add_route">
+                                <input type="hidden" name="route_id" id="edit_route_id" value="">
                                 
                                 <div class="form-group">
                                     <label for="toda_name">TODA / Terminal Name</label>
@@ -120,7 +121,8 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                                 <input type="hidden" id="terminal_lat" name="terminal_lat" required>
                                 <input type="hidden" id="terminal_lng" name="terminal_lng" required>
                                 
-                                <button type="submit" class="btn btn-secondary auth-btn" style="width:100%; margin-top:10px;">Save Route</button>
+                                <button type="submit" id="submitBtn" class="btn btn-secondary auth-btn" style="width:100%; margin-top:10px;">Save Route</button>
+                                <button type="button" id="cancelBtn" class="btn btn-primary auth-btn" style="width:100%; margin-top:10px; background:#6b7280; display:none;">Cancel Edit</button>
                             </form>
                         </div>
                     </div>
@@ -154,13 +156,21 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                                                 <?php echo number_format($row['terminal_lat'], 4) . ', ' . number_format($row['terminal_lng'], 4); ?>
                                             </td>
                                             <td>
-                                                <!-- Action to add stops (Phase 2 expansion) -->
+                                                <!-- Action to add stops -->
                                                 <a href="manage_stops.php?route_id=<?php echo $row['id']; ?>" class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem; border-radius:4px;">Stops</a>
-                                                <form action="php/route_action.php" method="POST" style="display:inline;" onsubmit="return confirm('Delete this route?');">
-                                                    <input type="hidden" name="action" value="delete_route">
-                                                    <input type="hidden" name="route_id" value="<?php echo $row['id']; ?>">
-                                                    <button type="submit" class="btn btn-secondary" style="padding:4px 10px; font-size:0.75rem; border-radius:4px; background:#ef4444; color:white;">Del</button>
-                                                </form>
+                                                
+                                                <button type="button" class="btn btn-primary edit-btn" 
+                                                    data-id="<?php echo $row['id']; ?>"
+                                                    data-name="<?php echo htmlspecialchars($row['toda_name']); ?>"
+                                                    data-base="<?php echo $row['base_fare']; ?>"
+                                                    data-perkm="<?php echo $row['per_km_fare']; ?>"
+                                                    data-lat="<?php echo $row['terminal_lat']; ?>"
+                                                    data-lng="<?php echo $row['terminal_lng']; ?>"
+                                                    style="padding:4px 10px; font-size:0.75rem; border-radius:4px; background:var(--orange); color:white;">Edit</button>
+
+                                                <button type="button" class="btn btn-secondary delete-btn" 
+                                                    data-id="<?php echo $row['id']; ?>"
+                                                    style="padding:4px 10px; font-size:0.75rem; border-radius:4px; background:#ef4444; color:white;">Del</button>
                                             </td>
                                         </tr>
                                         <?php endwhile; ?>
@@ -179,6 +189,12 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
         </div>
     </div>
 
+    <!-- Hidden Delete Form -->
+    <form id="deleteForm" action="php/route_action.php" method="POST" style="display:none;">
+        <input type="hidden" name="action" value="delete_route">
+        <input type="hidden" name="route_id" id="delete_route_id">
+    </form>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -192,9 +208,11 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
             if (errorMsg) {
                 actionAlert.textContent = errorMsg;
                 actionAlert.className = 'alert error';
+                actionAlert.style.display = 'block';
             } else if (successMsg) {
                 actionAlert.textContent = successMsg;
                 actionAlert.className = 'alert success';
+                actionAlert.style.display = 'block';
             }
 
             // Map Picker Init
@@ -216,6 +234,66 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                     mapPicker.removeLayer(marker);
                 }
                 marker = L.marker([lat, lng]).addTo(mapPicker);
+            });
+
+            // Edit Logic
+            const editBtns = document.querySelectorAll('.edit-btn');
+            const formTitle = document.getElementById('formTitle');
+            const formAction = document.getElementById('formAction');
+            const editRouteId = document.getElementById('edit_route_id');
+            const submitBtn = document.getElementById('submitBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const todaInput = document.getElementById('toda_name');
+            const baseInput = document.getElementById('base_fare');
+            const perKmInput = document.getElementById('per_km_fare');
+
+            editBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    const name = btn.getAttribute('data-name');
+                    const base = btn.getAttribute('data-base');
+                    const perkm = btn.getAttribute('data-perkm');
+                    const lat = btn.getAttribute('data-lat');
+                    const lng = btn.getAttribute('data-lng');
+
+                    formTitle.textContent = "✏️ Edit TODA / Route";
+                    formAction.value = "edit_route";
+                    editRouteId.value = id;
+                    todaInput.value = name;
+                    baseInput.value = base;
+                    perKmInput.value = perkm;
+                    submitBtn.textContent = "Update Route";
+                    cancelBtn.style.display = "block";
+
+                    // Update Map
+                    document.getElementById('terminal_lat').value = lat;
+                    document.getElementById('terminal_lng').value = lng;
+                    if (marker) mapPicker.removeLayer(marker);
+                    marker = L.marker([lat, lng]).addTo(mapPicker);
+                    mapPicker.setView([lat, lng], 15);
+                });
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                formTitle.textContent = "➕ Add New TODA / Route";
+                formAction.value = "add_route";
+                editRouteId.value = "";
+                document.getElementById('routeForm').reset();
+                submitBtn.textContent = "Save Route";
+                cancelBtn.style.display = "none";
+                if (marker) mapPicker.removeLayer(marker);
+            });
+
+            // Delete Logic
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('.delete-btn');
+                if (btn) {
+                    const id = btn.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this route? This will also remove all its stops.')) {
+                        document.getElementById('delete_route_id').value = id;
+                        document.getElementById('deleteForm').submit();
+                    }
+                }
             });
 
             // Sidebar toggle
