@@ -55,30 +55,30 @@ $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM u
                 </a>
 
                 <span class="nav-section-title">Management</span>
-                <a href="#" class="nav-link" id="navUsers">
+                <a href="manage_users.php" class="nav-link" id="navUsers">
                     <span class="nav-icon">👥</span> Users
                 </a>
                 <a href="manage_routes.php" class="nav-link" id="navRoutesMgmt">
                     <span class="nav-icon">🛤️</span> Routes & TODA
                 </a>
-                <a href="#" class="nav-link" id="navFareMgmt">
+                <a href="manage_routes.php" class="nav-link" id="navFareMgmt">
                     <span class="nav-icon">💰</span> Fares
                 </a>
-                <a href="#" class="nav-link" id="navStopsMgmt">
+                <a href="manage_routes.php" class="nav-link" id="navStopsMgmt">
                     <span class="nav-icon">📍</span> Stops & Terminals
                 </a>
-                <a href="#" class="nav-link" id="navTODAMgmt">
+                <a href="manage_routes.php" class="nav-link" id="navTODAMgmt">
                     <span class="nav-icon">🏢</span> TODA
                 </a>
 
                 <span class="nav-section-title">Analytics</span>
-                <a href="#" class="nav-link" id="navMapAdmin">
+                <a href="route_map.php" class="nav-link" id="navMapAdmin">
                     <span class="nav-icon">🗺️</span> Map Overview
                 </a>
-                <a href="#" class="nav-link" id="navReports">
+                <a href="reports.php" class="nav-link" id="navReports">
                     <span class="nav-icon">📈</span> Reports
                 </a>
-                <a href="#" class="nav-link" id="navFeedback">
+                <a href="feedback.php" class="nav-link" id="navFeedback">
                     <span class="nav-icon">💬</span> Feedback
                 </a>
             </nav>
