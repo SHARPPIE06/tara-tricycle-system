@@ -1,7 +1,6 @@
 -- TARA Database Schema
 
-CREATE DATABASE IF NOT EXISTS tara_db;
-USE tara_db;
+
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
