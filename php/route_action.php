@@ -1,6 +1,6 @@
 <?php
 // route_action.php
-session_start();
+require_once 'session_init.php';
 require_once 'db_connect.php';
 
 // Ensure user is an admin

@@ -34,3 +34,9 @@ CREATE TABLE IF NOT EXISTS stops (
 INSERT INTO users (username, email, password_hash, role) VALUES 
 ('System Admin', 'admin@tara.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
 -- Note: the hash above is for the password "password"
+
+CREATE TABLE IF NOT EXISTS sessions (
+    id VARCHAR(128) PRIMARY KEY,
+    data TEXT NOT NULL,
+    timestamp INT(10) UNSIGNED NOT NULL
+);

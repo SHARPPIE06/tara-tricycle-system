@@ -1,6 +1,6 @@
 <?php
 // fare_estimator.php
-session_start();
+require_once 'php/session_init.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {

@@ -1,5 +1,6 @@
 <?php
-session_start();
+// auth_login.php
+require_once 'session_init.php';
 require_once 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

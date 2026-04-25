@@ -1,14 +1,13 @@
 <?php
 // db_connect.php
-$servername = "localhost";
-$username = "root"; // Update for InfinityFree
-$password = "";     // Update for InfinityFree
-$dbname = "tara_db";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$host = getenv('DB_HOST') ?: 'localhost';
+$user = getenv('DB_USER') ?: 'root';
+$pass = getenv('DB_PASS') ?: '';
+$dbname = getenv('DB_NAME') ?: 'tara_db';
 
-// Check connection
+$conn = new mysqli($host, $user, $pass, $dbname);
+
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
