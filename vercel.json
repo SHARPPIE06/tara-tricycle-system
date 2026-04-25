@@ -1,6 +1,28 @@
 {
-    "functions": {
-        "*.php": { "runtime": "vercel-php@0.9.0" },
-        "php/**/*.php": { "runtime": "vercel-php@0.9.0" }
+  "functions": {
+    "*.php": { "runtime": "vercel-php@0.9.0" },
+    "php/**/*.php": { "runtime": "vercel-php@0.9.0" }
+  },
+  "routes": [
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*\\.php)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.php"
     }
+  ]
 }
