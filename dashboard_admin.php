@@ -109,34 +109,34 @@ $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM u
             <div class="page-content">
                 <!-- Stats -->
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <a href="manage_routes.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon blue">👥</div>
                         <div class="stat-info">
                             <h3><?php echo $userCount; ?></h3>
                             <p>Total Users</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="manage_routes.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon orange">🛤️</div>
                         <div class="stat-info">
                             <h3><?php echo $routeCount; ?></h3>
                             <p>Routes</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="manage_routes.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon green">📍</div>
                         <div class="stat-info">
                             <h3><?php echo $stopCount; ?></h3>
                             <p>Stops</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="feedback.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon purple">💬</div>
                         <div class="stat-info">
-                            <h3>0</h3>
+                            <h3>Reviews</h3>
                             <p>Feedback</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Map Overview -->
@@ -190,21 +190,21 @@ $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM u
                     </div>
                     <div class="card-body">
                         <div class="quick-actions">
-                            <div class="action-card" id="actionAddRoute">
+                            <div class="action-card" id="actionAddRoute" onclick="window.location.href='manage_routes.php'" style="cursor:pointer;">
                                 <span class="action-icon">➕</span>
                                 <span>Add Route</span>
                             </div>
-                            <div class="action-card" id="actionManageFares">
+                            <div class="action-card" id="actionManageFares" onclick="window.location.href='manage_routes.php'" style="cursor:pointer;">
                                 <span class="action-icon">💰</span>
                                 <span>Manage Fares</span>
                             </div>
-                            <div class="action-card" id="actionAddStop">
+                            <div class="action-card" id="actionAddStop" onclick="window.location.href='manage_routes.php'" style="cursor:pointer;">
                                 <span class="action-icon">📍</span>
                                 <span>Add Stop</span>
                             </div>
-                            <div class="action-card" id="actionViewReports">
-                                <span class="action-icon">📊</span>
-                                <span>View Reports</span>
+                            <div class="action-card" id="actionViewProfile" onclick="window.location.href='profile.php'" style="cursor:pointer;">
+                                <span class="action-icon">👤</span>
+                                <span>My Profile</span>
                             </div>
                         </div>
                     </div>

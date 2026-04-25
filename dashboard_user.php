@@ -99,41 +99,41 @@ $initials = strtoupper(substr($username, 0, 1));
             <div class="page-content">
                 <!-- Stats -->
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <a href="route_map.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon blue">🛤️</div>
                         <div class="stat-info">
-                            <h3>12</h3>
+                            <h3>Route</h3>
                             <p>Available Routes</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="terminals.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon orange">🏢</div>
                         <div class="stat-info">
-                            <h3>8</h3>
-                            <p>TODA Terminals</p>
+                            <h3>TODA</h3>
+                            <p>Terminals</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="saved_locations.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon green">📌</div>
                         <div class="stat-info">
-                            <h3>3</h3>
-                            <p>Saved Locations</p>
+                            <h3>Saved</h3>
+                            <p>Locations</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
+                    </a>
+                    <a href="feedback.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon purple">⭐</div>
                         <div class="stat-info">
-                            <h3>5</h3>
-                            <p>My Reviews</p>
+                            <h3>Reviews</h3>
+                            <p>My Feedback</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Map Preview -->
                 <div class="content-card">
                     <div class="card-header">
                         <h3>🗺️ Route Map — Rizal Province</h3>
-                        <a href="#" class="btn btn-primary" style="padding:8px 20px;font-size:0.85rem;">Expand Map</a>
+                        <a href="route_map.php" class="btn btn-primary" style="padding:8px 20px;font-size:0.85rem;">Expand Map</a>
                     </div>
                     <div class="card-body" style="padding:0;">
                         <div id="map"></div>
@@ -147,19 +147,19 @@ $initials = strtoupper(substr($username, 0, 1));
                     </div>
                     <div class="card-body">
                         <div class="quick-actions">
-                            <div class="action-card" id="actionEstimateFare">
+                            <div class="action-card" id="actionEstimateFare" onclick="window.location.href='fare_estimator.php'" style="cursor:pointer;">
                                 <span class="action-icon">💰</span>
                                 <span>Estimate Fare</span>
                             </div>
-                            <div class="action-card" id="actionSearchRoute">
+                            <div class="action-card" id="actionSearchRoute" onclick="window.location.href='route_map.php'" style="cursor:pointer;">
                                 <span class="action-icon">🔍</span>
                                 <span>Search Route</span>
                             </div>
-                            <div class="action-card" id="actionFindTODA">
+                            <div class="action-card" id="actionFindTODA" onclick="window.location.href='terminals.php'" style="cursor:pointer;">
                                 <span class="action-icon">🏢</span>
                                 <span>Find TODA</span>
                             </div>
-                            <div class="action-card" id="actionRateDriver">
+                            <div class="action-card" id="actionRateDriver" onclick="window.location.href='feedback.php'" style="cursor:pointer;">
                                 <span class="action-icon">⭐</span>
                                 <span>Rate a Driver</span>
                             </div>
