@@ -47,7 +47,7 @@ $initials = strtoupper(substr($username, 0, 1));
                 <a href="dashboard_user.php" class="nav-link active" id="navDashboard">
                     <span class="nav-icon">📊</span> Dashboard
                 </a>
-                <a href="#" class="nav-link" id="navMap">
+                <a href="route_map.php" class="nav-link" id="navMap">
                     <span class="nav-icon">🗺️</span> Route Map
                 </a>
                 <a href="fare_estimator.php" class="nav-link" id="navFare">
@@ -55,18 +55,18 @@ $initials = strtoupper(substr($username, 0, 1));
                 </a>
                 
                 <span class="nav-section-title">Search</span>
-                <a href="#" class="nav-link" id="navRoutes">
+                <a href="routes.php" class="nav-link" id="navRoutes">
                     <span class="nav-icon">🛤️</span> Routes
                 </a>
-                <a href="#" class="nav-link" id="navTODA">
+                <a href="terminals.php" class="nav-link" id="navTODA">
                     <span class="nav-icon">🏢</span> TODA / Terminals
                 </a>
 
                 <span class="nav-section-title">Account</span>
-                <a href="#" class="nav-link" id="navProfile">
+                <a href="profile.php" class="nav-link" id="navProfile">
                     <span class="nav-icon">👤</span> My Profile
                 </a>
-                <a href="#" class="nav-link" id="navSaved">
+                <a href="saved_locations.php" class="nav-link" id="navSaved">
                     <span class="nav-icon">📌</span> Saved Locations
                 </a>
             </nav>
