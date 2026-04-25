@@ -153,7 +153,7 @@ $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM u
                 <div class="content-card">
                     <div class="card-header">
                         <h3>👥 Recent Users</h3>
-                        <a href="#" class="btn btn-primary" style="padding:8px 20px;font-size:0.85rem;">View All</a>
+                        <a href="manage_users.php" class="btn btn-primary" style="padding:8px 20px;font-size:0.85rem;">View All</a>
                     </div>
                     <div class="card-body" style="padding:0;overflow-x:auto;">
                         <table class="data-table" id="usersTable">
