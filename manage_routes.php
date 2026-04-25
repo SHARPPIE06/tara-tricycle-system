@@ -155,7 +155,7 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                                             </td>
                                             <td>
                                                 <!-- Action to add stops (Phase 2 expansion) -->
-                                                <a href="#" class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem; border-radius:4px;">Stops</a>
+                                                <a href="manage_stops.php?route_id=<?php echo $row['id']; ?>" class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem; border-radius:4px;">Stops</a>
                                                 <form action="php/route_action.php" method="POST" style="display:inline;" onsubmit="return confirm('Delete this route?');">
                                                     <input type="hidden" name="action" value="delete_route">
                                                     <input type="hidden" name="route_id" value="<?php echo $row['id']; ?>">

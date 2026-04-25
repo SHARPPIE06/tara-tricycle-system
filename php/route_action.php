@@ -47,6 +47,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt->close();
     }
+    elseif ($action === 'add_stop') {
+        $route_id = $_POST['route_id'] ?? 0;
+        $stop_name = $_POST['stop_name'] ?? '';
+        $lat = $_POST['lat'] ?? 0;
+        $lng = $_POST['lng'] ?? 0;
+
+        if (empty($stop_name) || $lat == 0 || $lng == 0) {
+            header("Location: ../manage_stops.php?route_id=$route_id&error=Please fill all fields and pick location on map.");
+            exit();
+        }
+
+        $stmt = $conn->prepare("INSERT INTO stops (route_id, stop_name, lat, lng) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("isdd", $route_id, $stop_name, $lat, $lng);
+
+        if ($stmt->execute()) {
+            header("Location: ../manage_stops.php?route_id=$route_id&success=Stop added.");
+        } else {
+            header("Location: ../manage_stops.php?route_id=$route_id&error=Failed to add stop.");
+        }
+        $stmt->close();
+    }
+    elseif ($action === 'delete_stop') {
+        $stop_id = $_POST['stop_id'] ?? 0;
+        $route_id = $_POST['route_id'] ?? 0;
+
+        $stmt = $conn->prepare("DELETE FROM stops WHERE id = ?");
+        $stmt->bind_param("i", $stop_id);
+
+        if ($stmt->execute()) {
+            header("Location: ../manage_stops.php?route_id=$route_id&success=Stop deleted.");
+        } else {
+            header("Location: ../manage_stops.php?route_id=$route_id&error=Failed to delete stop.");
+        }
+        $stmt->close();
+    }
     else {
         header("Location: ../manage_routes.php");
     }
