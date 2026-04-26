@@ -43,12 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Handle File Uploads
-    $upload_dir = '../uploads/ids/';
-    if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0755, true);
-    }
-    
+    // Handle File Uploads (Base64 encoding for read-only environments)
     $id_documents = [];
     foreach ($_FILES as $key => $file) {
         if ($file['error'] === UPLOAD_ERR_OK) {
@@ -58,11 +53,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("Location: ../register.php?error=Invalid file type for " . htmlspecialchars($key));
                 exit();
             }
-            $new_filename = uniqid('id_') . '_' . time() . '.' . $ext;
-            $destination = $upload_dir . $new_filename;
             
-            if (move_uploaded_file($file['tmp_name'], $destination)) {
-                $id_documents[$key] = 'uploads/ids/' . $new_filename;
+            // Read file content and convert to base64 data URI
+            $fileContent = file_get_contents($file['tmp_name']);
+            if ($fileContent !== false) {
+                // simple mime type detection based on extension
+                $mime = 'application/octet-stream';
+                if (in_array(strtolower($ext), ['jpg', 'jpeg'])) $mime = 'image/jpeg';
+                else if (strtolower($ext) === 'png') $mime = 'image/png';
+                else if (strtolower($ext) === 'pdf') $mime = 'application/pdf';
+
+                $base64 = base64_encode($fileContent);
+                $dataUri = 'data:' . $mime . ';base64,' . $base64;
+                
+                $id_documents[$key] = $dataUri;
             }
         }
     }

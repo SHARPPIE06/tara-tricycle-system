@@ -429,7 +429,12 @@ $initials = strtoupper(substr($username, 0, 1));
                 docsHtml = '<ul class="doc-list">';
                 docKeys.forEach(key => {
                     const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    docsHtml += `<li><span>${label}</span><a href="${docs[key]}" target="_blank">View File →</a></li>`;
+                    const docUrl = docs[key];
+                    if (docUrl.startsWith('data:')) {
+                        docsHtml += `<li><span>${label}</span><a href="${docUrl}" download="${key}_document">Download ↓</a></li>`;
+                    } else {
+                        docsHtml += `<li><span>${label}</span><a href="${docUrl}" target="_blank">View File →</a></li>`;
+                    }
                 });
                 docsHtml += '</ul>';
             } else {
