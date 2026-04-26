@@ -25,11 +25,10 @@ body {
   position: relative;
   width: 100%;
   min-height: 100svh;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
 
   background-image: url('../assets/welcomebg-tricycle-mobile.png');
   background-size: cover;
@@ -99,11 +98,11 @@ body {
 }
 
 .proceed-btn {
-  position: relative;
+  margin: auto auto clamp(50px, 10vh, 100px) auto;
   z-index: 3;
+
   width: min(78vw, 540px);
-  height: clamp(54px, 7vh, 68px);
-  margin-bottom: clamp(40px, 6vh, 80px);
+  height: clamp(60px, 8vh, 72px);
 
   border: none;
   border-radius: 999px;
@@ -168,9 +167,8 @@ body {
   }
 
   .proceed-btn {
-    margin-left: clamp(60px, 8vw, 140px);
-    margin-bottom: clamp(50px, 8vh, 100px);
-    align-self: flex-start;
+    margin: auto auto clamp(70px, 10vh, 120px) clamp(60px, 8vw, 140px);
+
     width: min(32vw, 420px);
     height: 64px;
   }
