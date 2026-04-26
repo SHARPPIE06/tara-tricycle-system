@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // manage_routes.php — Admin Route Management
 require_once 'php/session_init.php';
 

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // manage_stops.php — Admin Stop Management
 require_once 'php/session_init.php';
 

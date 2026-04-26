@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // feedback.php
 require_once 'php/session_init.php';
 

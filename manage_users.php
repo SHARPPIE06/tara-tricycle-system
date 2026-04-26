@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // manage_users.php — Admin User Management
 require_once 'php/session_init.php';
 
