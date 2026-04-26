@@ -1,5 +1,5 @@
 <?php
-// manage_users.php — Admin User Management
+// manage_users.php - Admin User Management
 require_once 'php/session_init.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -349,7 +349,7 @@ $initials = strtoupper(substr($username, 0, 1));
                                             <span class="class-tag"><?php echo htmlspecialchars($cls); ?></span>
                                         <?php endforeach; ?>
                                         <?php if (empty($classifications)): ?>
-                                            <span style="color:#aaa; font-size:0.8rem;">—</span>
+                                            <span style="color:#aaa; font-size:0.8rem;">-</span>
                                         <?php endif; ?>
                                     </td>
                                     <td><?php echo date('M d, Y', strtotime($row['created_at'])); ?></td>
@@ -443,15 +443,15 @@ $initials = strtoupper(substr($username, 0, 1));
                     <div class="detail-grid">
                         <div class="detail-item">
                             <div class="detail-label">TODA Name</div>
-                            <div class="detail-value">${d.toda || '—'}</div>
+                            <div class="detail-value">${d.toda || '-'}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Home Address</div>
-                            <div class="detail-value">${d.address || '—'}</div>
+                            <div class="detail-value">${d.address || '-'}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Member Number</div>
-                            <div class="detail-value">${d.member || '—'}</div>
+                            <div class="detail-value">${d.member || '-'}</div>
                         </div>
                     </div>
                 `;
@@ -469,23 +469,23 @@ $initials = strtoupper(substr($username, 0, 1));
                 <div class="detail-grid">
                     <div class="detail-item">
                         <div class="detail-label">First Name</div>
-                        <div class="detail-value">${d.firstname || '—'}</div>
+                        <div class="detail-value">${d.firstname || '-'}</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-label">Middle Name</div>
-                        <div class="detail-value">${d.middlename || '—'}</div>
+                        <div class="detail-value">${d.middlename || '-'}</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-label">Last Name</div>
-                        <div class="detail-value">${d.lastname || '—'}</div>
+                        <div class="detail-value">${d.lastname || '-'}</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-label">Age</div>
-                        <div class="detail-value">${d.age || '—'}</div>
+                        <div class="detail-value">${d.age || '-'}</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-label">Birthdate</div>
-                        <div class="detail-value">${d.birthdate || '—'}</div>
+                        <div class="detail-value">${d.birthdate || '-'}</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-label">Email</div>

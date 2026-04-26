@@ -1,5 +1,5 @@
 <?php
-// manage_routes.php — Admin Route Management
+// manage_routes.php - Admin Route Management
 require_once 'php/session_init.php';
 
 // Check if user is logged in and is admin

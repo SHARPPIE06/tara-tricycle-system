@@ -1,5 +1,5 @@
 <?php
-// rate_driver.php — Driver Rating & Session End Screen
+// rate_driver.php - Driver Rating & Session End Screen
 require_once 'php/session_init.php';
 
 if (!isset($_SESSION['user_id'])) {

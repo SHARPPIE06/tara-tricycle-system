@@ -1,5 +1,5 @@
 <?php
-// manage_stops.php — Admin Stop Management
+// manage_stops.php - Admin Stop Management
 require_once 'php/session_init.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
