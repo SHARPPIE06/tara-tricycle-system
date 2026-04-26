@@ -29,16 +29,15 @@ if ($action === 'submit') {
     }
     
     $stmt = $conn->prepare("INSERT INTO reviews (user_id, driver_name, route_id, rating, comment) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("isiis", $user_id, $driver_name, $route_id, $rating, $comment);
     
-    if ($stmt->execute()) {
+    if ($stmt->execute([$user_id, $driver_name, $route_id, $rating, $comment])) {
         header("Location: ../feedback.php?success=Review submitted successfully!");
     } else {
         header("Location: ../feedback.php?error=Failed to submit review");
     }
-    $stmt->close();
+    $stmt = null;
 } else {
     header("Location: ../feedback.php");
 }
-$conn->close();
+$conn = null;
 ?>

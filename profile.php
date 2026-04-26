@@ -14,11 +14,9 @@ require_once 'php/db_connect.php';
 
 // Fetch current user data
 $stmt = $conn->prepare("SELECT username, email, created_at FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$userData = $result->fetch_assoc();
-$stmt->close();
+$stmt->execute([$user_id]);
+$userData = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = null;
 
 $initials = strtoupper(substr($userData['username'], 0, 1));
 ?>

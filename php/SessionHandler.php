@@ -17,11 +17,9 @@ class MySQLSessionHandler implements SessionHandlerInterface {
 
     public function read($id): string|false {
         $stmt = $this->conn->prepare("SELECT data FROM sessions WHERE id = ?");
-        $stmt->bind_param("s", $id);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $stmt->execute([$id]);
         
-        if ($row = $result->fetch_assoc()) {
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return $row['data'];
         }
         return '';
@@ -29,23 +27,20 @@ class MySQLSessionHandler implements SessionHandlerInterface {
 
     public function write($id, $data): bool {
         $timestamp = time();
-        $stmt = $this->conn->prepare("REPLACE INTO sessions (id, data, timestamp) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $id, $data, $timestamp);
-        return $stmt->execute();
+        $stmt = $this->conn->prepare("INSERT INTO sessions (id, data, timestamp) VALUES (?, ?, ?) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data, timestamp = EXCLUDED.timestamp");
+        return $stmt->execute([$id, $data, $timestamp]);
     }
 
     public function destroy($id): bool {
         $stmt = $this->conn->prepare("DELETE FROM sessions WHERE id = ?");
-        $stmt->bind_param("s", $id);
-        return $stmt->execute();
+        return $stmt->execute([$id]);
     }
 
     public function gc($maxlifetime): int|false {
         $stmt = $this->conn->prepare("DELETE FROM sessions WHERE timestamp < ?");
         $old = time() - $maxlifetime;
-        $stmt->bind_param("i", $old);
-        $stmt->execute();
-        return $stmt->affected_rows;
+        $stmt->execute([$old]);
+        return $stmt->rowCount();
     }
 }
 ?>

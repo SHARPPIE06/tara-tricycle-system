@@ -25,14 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt = $conn->prepare("INSERT INTO routes (toda_name, terminal_lat, terminal_lng, base_fare, per_km_fare) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sdddd", $toda_name, $terminal_lat, $terminal_lng, $base_fare, $per_km_fare);
-
-        if ($stmt->execute()) {
+        
+        if ($stmt->execute([$toda_name, $terminal_lat, $terminal_lng, $base_fare, $per_km_fare])) {
             header("Location: ../manage_routes.php?success=Route added successfully.");
         } else {
             header("Location: ../manage_routes.php?error=Failed to add route.");
         }
-        $stmt->close();
+        $stmt = null;
         exit();
     }
     elseif ($action === 'edit_route') {
@@ -50,32 +49,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($terminal_lat && $terminal_lng) {
             $stmt = $conn->prepare("UPDATE routes SET toda_name = ?, terminal_lat = ?, terminal_lng = ?, base_fare = ?, per_km_fare = ? WHERE id = ?");
-            $stmt->bind_param("sddddi", $toda_name, $terminal_lat, $terminal_lng, $base_fare, $per_km_fare, $route_id);
+            $exec_params = [$toda_name, $terminal_lat, $terminal_lng, $base_fare, $per_km_fare, $route_id];
         } else {
             $stmt = $conn->prepare("UPDATE routes SET toda_name = ?, base_fare = ?, per_km_fare = ? WHERE id = ?");
-            $stmt->bind_param("sddi", $toda_name, $base_fare, $per_km_fare, $route_id);
+            $exec_params = [$toda_name, $base_fare, $per_km_fare, $route_id];
         }
 
-        if ($stmt->execute()) {
+        if ($stmt->execute($exec_params)) {
             header("Location: ../manage_routes.php?success=Route updated successfully.");
         } else {
             header("Location: ../manage_routes.php?error=Failed to update route.");
         }
-        $stmt->close();
+        $stmt = null;
         exit();
     }
     elseif ($action === 'delete_route') {
         $route_id = $_POST['route_id'] ?? 0;
 
         $stmt = $conn->prepare("DELETE FROM routes WHERE id = ?");
-        $stmt->bind_param("i", $route_id);
-
-        if ($stmt->execute()) {
+        
+        if ($stmt->execute([$route_id])) {
             header("Location: ../manage_routes.php?success=Route deleted.");
         } else {
             header("Location: ../manage_routes.php?error=Failed to delete route.");
         }
-        $stmt->close();
+        $stmt = null;
         exit();
     }
     elseif ($action === 'add_stop') {
@@ -90,14 +88,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt = $conn->prepare("INSERT INTO stops (route_id, stop_name, lat, lng) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("isdd", $route_id, $stop_name, $lat, $lng);
-
-        if ($stmt->execute()) {
+        
+        if ($stmt->execute([$route_id, $stop_name, $lat, $lng])) {
             header("Location: ../manage_stops.php?route_id=$route_id&success=Stop added.");
         } else {
             header("Location: ../manage_stops.php?route_id=$route_id&error=Failed to add stop.");
         }
-        $stmt->close();
+        $stmt = null;
         exit();
     }
     elseif ($action === 'delete_stop') {
@@ -105,14 +102,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $route_id = $_POST['route_id'] ?? 0;
 
         $stmt = $conn->prepare("DELETE FROM stops WHERE id = ?");
-        $stmt->bind_param("i", $stop_id);
-
-        if ($stmt->execute()) {
+        
+        if ($stmt->execute([$stop_id])) {
             header("Location: ../manage_stops.php?route_id=$route_id&success=Stop deleted.");
         } else {
             header("Location: ../manage_stops.php?route_id=$route_id&error=Failed to delete stop.");
         }
-        $stmt->close();
+        $stmt = null;
         exit();
     }
     else {
@@ -123,5 +119,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: ../manage_routes.php");
     exit();
 }
-$conn->close();
+$conn = null;
 ?>

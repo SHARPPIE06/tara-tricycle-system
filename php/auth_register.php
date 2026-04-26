@@ -22,11 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check if email already exists
     $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->execute([$email]);
 
-    if ($result->num_rows > 0) {
+    if ($stmt->rowCount() > 0) {
         header("Location: ../register.php?error=Email already exists");
         exit();
     }
@@ -36,16 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Insert new user
     $stmt = $conn->prepare("INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $username, $email, $password_hash, $role);
 
-    if ($stmt->execute()) {
+    if ($stmt->execute([$username, $email, $password_hash, $role])) {
         header("Location: ../login.php?success=Account created successfully. Please login.");
     } else {
         header("Location: ../register.php?error=Registration failed. Please try again.");
     }
 
-    $stmt->close();
-    $conn->close();
+    $stmt = null;
+    $conn = null;
 } else {
     header("Location: ../register.php");
 }

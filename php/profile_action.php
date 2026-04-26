@@ -20,15 +20,14 @@ if ($action === 'update_profile') {
     }
     
     $stmt = $conn->prepare("UPDATE users SET username = ? WHERE id = ?");
-    $stmt->bind_param("si", $username, $user_id);
     
-    if ($stmt->execute()) {
+    if ($stmt->execute([$username, $user_id])) {
         $_SESSION['username'] = $username;
         header("Location: ../profile.php?success=Profile updated successfully");
     } else {
         header("Location: ../profile.php?error=Failed to update profile");
     }
-    $stmt->close();
+    $stmt = null;
 } 
 elseif ($action === 'update_password') {
     $new_password = $_POST['new_password'] ?? '';
@@ -40,17 +39,16 @@ elseif ($action === 'update_password') {
     
     $hashed = password_hash($new_password, PASSWORD_DEFAULT);
     $stmt = $conn->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
-    $stmt->bind_param("si", $hashed, $user_id);
     
-    if ($stmt->execute()) {
+    if ($stmt->execute([$hashed, $user_id])) {
         header("Location: ../profile.php?success=Password updated successfully");
     } else {
         header("Location: ../profile.php?error=Failed to update password");
     }
-    $stmt->close();
+    $stmt = null;
 }
 else {
     header("Location: ../profile.php");
 }
-$conn->close();
+$conn = null;
 ?>

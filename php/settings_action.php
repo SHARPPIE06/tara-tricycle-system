@@ -13,16 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pwd_enabled = isset($_POST['pwd_discount_enabled']) ? '1' : '0';
 
     $stmt = $conn->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = 'pwd_discount_enabled'");
-    $stmt->bind_param("s", $pwd_enabled);
-
-    if ($stmt->execute()) {
+    
+    if ($stmt->execute([$pwd_enabled])) {
         header("Location: ../dashboard_admin.php?settings_success=1");
     } else {
         header("Location: ../dashboard_admin.php?error=Failed to update settings");
     }
-    $stmt->close();
+    $stmt = null;
 } else {
     header("Location: ../dashboard_admin.php");
 }
-$conn->close();
+$conn = null;
 ?>

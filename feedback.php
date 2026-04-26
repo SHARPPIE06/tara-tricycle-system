@@ -23,9 +23,8 @@ if ($role === 'admin') {
     $conn->query("UPDATE reviews SET is_read = 1 WHERE is_read = 0");
 } else {
     $reviews = $conn->prepare("SELECT r.*, rt.toda_name FROM reviews r LEFT JOIN routes rt ON r.route_id = rt.id WHERE r.user_id = ? ORDER BY r.created_at DESC");
-    $reviews->bind_param("i", $user_id);
-    $reviews->execute();
-    $my_reviews = $reviews->get_result();
+    $reviews->execute([$user_id]);
+    $my_reviews = $reviews;
 }
 ?>
 <!DOCTYPE html>
@@ -140,7 +139,7 @@ if ($role === 'admin') {
                                     <label>Route / TODA</label>
                                     <select name="route_id" class="form-control" required>
                                         <option value="">Select Route</option>
-                                        <?php while($row = $routes->fetch_assoc()): ?>
+                                        <?php while($row = $routes->fetch(PDO::FETCH_ASSOC)): ?>
                                             <option value="<?php echo $row['id']; ?>"><?php echo htmlspecialchars($row['toda_name']); ?></option>
                                         <?php endwhile; ?>
                                     </select>
@@ -171,8 +170,8 @@ if ($role === 'admin') {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if($my_reviews->num_rows > 0): ?>
-                                        <?php while ($row = $my_reviews->fetch_assoc()): ?>
+                                    <?php if($my_reviews->rowCount() > 0): ?>
+                                        <?php while ($row = $my_reviews->fetch(PDO::FETCH_ASSOC)): ?>
                                         <tr>
                                             <td><small><?php echo date('M d, Y', strtotime($row['created_at'])); ?></small></td>
                                             <td>

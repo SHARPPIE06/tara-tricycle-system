@@ -16,11 +16,11 @@ if ($role !== 'admin') {
 require_once 'php/db_connect.php';
 
 // Fetch stats
-$userCount = $conn->query("SELECT COUNT(*) as c FROM users")->fetch_assoc()['c'];
-$routeCount = $conn->query("SELECT COUNT(*) as c FROM routes")->fetch_assoc()['c'];
-$stopCount = $conn->query("SELECT COUNT(*) as c FROM stops")->fetch_assoc()['c'];
-$reviewCount = $conn->query("SELECT COUNT(*) as c FROM reviews")->fetch_assoc()['c'];
-$avgRating = $conn->query("SELECT AVG(rating) as a FROM reviews")->fetch_assoc()['a'] ?? 0;
+$userCount = $conn->query("SELECT COUNT(*) as c FROM users")->fetch(PDO::FETCH_ASSOC)['c'];
+$routeCount = $conn->query("SELECT COUNT(*) as c FROM routes")->fetch(PDO::FETCH_ASSOC)['c'];
+$stopCount = $conn->query("SELECT COUNT(*) as c FROM stops")->fetch(PDO::FETCH_ASSOC)['c'];
+$reviewCount = $conn->query("SELECT COUNT(*) as c FROM reviews")->fetch(PDO::FETCH_ASSOC)['c'];
+$avgRating = $conn->query("SELECT AVG(rating) as a FROM reviews")->fetch(PDO::FETCH_ASSOC)['a'] ?? 0;
 
 $username = $_SESSION['username'] ?? 'Admin';
 $initials = strtoupper(substr($username, 0, 1));

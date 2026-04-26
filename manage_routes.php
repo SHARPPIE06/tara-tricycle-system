@@ -145,8 +145,8 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if($routes->num_rows > 0): ?>
-                                        <?php while ($row = $routes->fetch_assoc()): ?>
+                                    <?php if($routes->rowCount() > 0): ?>
+                                        <?php while ($row = $routes->fetch(PDO::FETCH_ASSOC)): ?>
                                         <tr>
                                             <td><?php echo $row['id']; ?></td>
                                             <td><?php echo htmlspecialchars($row['toda_name']); ?></td>

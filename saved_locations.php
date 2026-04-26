@@ -15,9 +15,8 @@ $role = $_SESSION['role'] ?? 'user';
 require_once 'php/db_connect.php';
 
 $saved = $conn->prepare("SELECT * FROM saved_locations WHERE user_id = ? ORDER BY created_at DESC");
-$saved->bind_param("i", $user_id);
-$saved->execute();
-$result = $saved->get_result();
+$saved->execute([$user_id]);
+$result = $saved;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -130,8 +129,8 @@ $result = $saved->get_result();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if($result->num_rows > 0): ?>
-                                        <?php while ($row = $result->fetch_assoc()): ?>
+                                    <?php if($result->rowCount() > 0): ?>
+                                        <?php while ($row = $result->fetch(PDO::FETCH_ASSOC)): ?>
                                         <tr>
                                             <td style="font-weight:600;"><?php echo htmlspecialchars($row['label']); ?></td>
                                             <td><small><?php echo htmlspecialchars($row['lat']) . ', ' . htmlspecialchars($row['lng']); ?></small></td>

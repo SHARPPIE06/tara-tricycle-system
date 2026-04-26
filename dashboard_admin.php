@@ -21,15 +21,15 @@ $initials = strtoupper(substr($username, 0, 1));
 
 // Fetch stats from DB
 require_once 'php/db_connect.php';
-$userCount = $conn->query("SELECT COUNT(*) as c FROM users")->fetch_assoc()['c'];
-$routeCount = $conn->query("SELECT COUNT(*) as c FROM routes")->fetch_assoc()['c'];
-$stopCount = $conn->query("SELECT COUNT(*) as c FROM stops")->fetch_assoc()['c'];
+$userCount = $conn->query("SELECT COUNT(*) as c FROM users")->fetch(PDO::FETCH_ASSOC)['c'];
+$routeCount = $conn->query("SELECT COUNT(*) as c FROM routes")->fetch(PDO::FETCH_ASSOC)['c'];
+$stopCount = $conn->query("SELECT COUNT(*) as c FROM stops")->fetch(PDO::FETCH_ASSOC)['c'];
 
 // Fetch recent users
 $recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC LIMIT 5");
 
 // Fetch unread feedback count
-$unreadFeedbackCount = $conn->query("SELECT COUNT(*) as c FROM reviews WHERE is_read = 0")->fetch_assoc()['c'];
+$unreadFeedbackCount = $conn->query("SELECT COUNT(*) as c FROM reviews")->fetch(PDO::FETCH_ASSOC)['c'] ?? 0;
 
 // Fetch recent feedback
 $recentFeedback = $conn->query("SELECT r.*, rt.toda_name, u.username FROM reviews r LEFT JOIN routes rt ON r.route_id = rt.id LEFT JOIN users u ON r.user_id = u.id ORDER BY r.created_at DESC LIMIT 5");
@@ -37,7 +37,7 @@ $recentFeedback = $conn->query("SELECT r.*, rt.toda_name, u.username FROM review
 // Fetch settings
 $settings = [];
 $settingsResult = $conn->query("SELECT setting_key, setting_value FROM settings");
-while($row = $settingsResult->fetch_assoc()) {
+while($row = $settingsResult ? $settingsResult->fetch(PDO::FETCH_ASSOC) : false) {
     $settings[$row['setting_key']] = $row['setting_value'];
 }
 $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
@@ -184,8 +184,8 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if($recentFeedback->num_rows > 0): ?>
-                                    <?php while ($row = $recentFeedback->fetch_assoc()): ?>
+                                <?php if($recentFeedback && $recentFeedback->rowCount() > 0): ?>
+                                    <?php while ($row = $recentFeedback->fetch(PDO::FETCH_ASSOC)): ?>
                                     <tr>
                                         <td><strong><?php echo htmlspecialchars($row['username']); ?></strong></td>
                                         <td>
@@ -234,7 +234,7 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($row = $recentUsers->fetch_assoc()): ?>
+                                <?php while ($row = $recentUsers ? $recentUsers->fetch(PDO::FETCH_ASSOC) : false): ?>
                                 <tr>
                                     <td><?php echo $row['id']; ?></td>
                                     <td><?php echo htmlspecialchars($row['username']); ?></td>

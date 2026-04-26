@@ -15,12 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Fetch user
     $stmt = $conn->prepare("SELECT id, username, password_hash, role FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
 
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
+    if ($user) {
         
         // Verify password
         if (password_verify($password, $user['password_hash'])) {
@@ -45,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $stmt->close();
-    $conn->close();
+    $stmt = null;
+    $conn = null;
 } else {
     header("Location: ../login.php");
 }

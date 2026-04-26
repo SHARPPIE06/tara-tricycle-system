@@ -17,12 +17,12 @@ require_once 'php/db_connect.php';
 // Fetch all routes for dropdown
 $routes = $conn->query("SELECT id, toda_name, base_fare, per_km_fare, terminal_lat, terminal_lng FROM routes ORDER BY toda_name ASC");
 $routesData = [];
-while ($row = $routes->fetch_assoc()) {
+while ($row = $routes->fetch(PDO::FETCH_ASSOC)) {
     $routesData[] = $row;
 }
 
 // Fetch PWD settings
-$pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'pwd_discount_enabled'")->fetch_assoc()['setting_value'] ?? '0';
+$pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'pwd_discount_enabled'")->fetch(PDO::FETCH_ASSOC)['setting_value'] ?? '0';
 ?>
 <!DOCTYPE html>
 <html lang="en">

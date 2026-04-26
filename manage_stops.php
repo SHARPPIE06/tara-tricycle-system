@@ -17,10 +17,9 @@ if ($route_id == 0) {
 
 // Fetch route info
 $stmt = $conn->prepare("SELECT toda_name FROM routes WHERE id = ?");
-$stmt->bind_param("i", $route_id);
-$stmt->execute();
-$route = $stmt->get_result()->fetch_assoc();
-$stmt->close();
+$stmt->execute([$route_id]);
+$route = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = null;
 
 if (!$route) {
     header("Location: manage_routes.php?error=Route not found");
@@ -29,10 +28,8 @@ if (!$route) {
 
 // Fetch existing stops
 $stmt = $conn->prepare("SELECT * FROM stops WHERE route_id = ? ORDER BY id ASC");
-$stmt->bind_param("i", $route_id);
-$stmt->execute();
-$stops = $stmt->get_result();
-$stmt->close();
+$stmt->execute([$route_id]);
+$stops = $stmt;
 
 $username = $_SESSION['username'] ?? 'Admin';
 $initials = strtoupper(substr($username, 0, 1));
@@ -130,8 +127,8 @@ $initials = strtoupper(substr($username, 0, 1));
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if($stops->num_rows > 0): ?>
-                                        <?php while ($row = $stops->fetch_assoc()): ?>
+                                    <?php if($stops->rowCount() > 0): ?>
+                                        <?php while ($row = $stops->fetch(PDO::FETCH_ASSOC)): ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($row['stop_name']); ?></td>
                                             <td><small><?php echo number_format($row['lat'], 4) . ', ' . number_format($row['lng'], 4); ?></small></td>

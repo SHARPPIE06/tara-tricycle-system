@@ -16,7 +16,7 @@ require_once 'php/db_connect.php';
 // Fetch all routes
 $routes = $conn->query("SELECT id, toda_name, terminal_lat, terminal_lng, base_fare, per_km_fare FROM routes ORDER BY toda_name ASC");
 $routesData = [];
-while ($row = $routes->fetch_assoc()) {
+while ($row = $routes->fetch(PDO::FETCH_ASSOC)) {
     $routesData[] = $row;
 }
 ?>

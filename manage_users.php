@@ -96,7 +96,7 @@ $initials = strtoupper(substr($username, 0, 1));
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($row = $users->fetch_assoc()): ?>
+                                <?php while ($row = $users->fetch(PDO::FETCH_ASSOC)): ?>
                                 <tr>
                                     <td><?php echo $row['id']; ?></td>
                                     <td style="font-weight:600;"><?php echo htmlspecialchars($row['username']); ?></td>
