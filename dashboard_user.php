@@ -11,6 +11,8 @@ if (!isset($_SESSION['user_id'])) {
 // Get user info from session
 $username = $_SESSION['username'] ?? 'User';
 $role = $_SESSION['role'] ?? 'user';
+$userStatus = $_SESSION['status'] ?? 'pending';
+$isVerified = ($userStatus === 'verified');
 
 // Redirect admins to admin dashboard
 if ($role === 'admin') {
@@ -31,7 +33,7 @@ $initials = strtoupper(substr($username, 0, 1));
     <link rel="stylesheet" href="css/dashboard.css">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         
@@ -97,6 +99,15 @@ $initials = strtoupper(substr($username, 0, 1));
 
             <!-- Page Content -->
             <div class="page-content">
+                <?php if (!$isVerified): ?>
+                <div style="background: #fef9c3; border: 1px solid #fde68a; border-radius: 12px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <span style="font-size: 1.3rem;">⏳</span>
+                    <div>
+                        <strong style="color: #a16207;">Account Pending Verification</strong>
+                        <p style="font-size: 0.82rem; color: #92400e; margin-top: 2px;">Your account is under review. You can search routes and view fare charts, but Driver Rating & Feedback is locked until verified.</p>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <!-- Stats -->
                 <div class="stats-grid">
                     <a href="route_map.php" class="stat-card" style="text-decoration:none; color:inherit;">
@@ -159,11 +170,54 @@ $initials = strtoupper(substr($username, 0, 1));
                                 <span class="action-icon">🏢</span>
                                 <span>Find TODA</span>
                             </div>
-                            <div class="action-card" id="actionRateDriver" onclick="window.location.href='feedback.php'" style="cursor:pointer;">
+                            <?php if ($isVerified): ?>
+                            <div class="action-card" id="actionRateDriver" onclick="window.location.href='rate_driver.php'" style="cursor:pointer;">
                                 <span class="action-icon">⭐</span>
                                 <span>Rate a Driver</span>
                             </div>
+                            <?php else: ?>
+                            <div class="action-card" style="cursor:not-allowed; opacity:0.45;" title="Account verification required">
+                                <span class="action-icon">🔒</span>
+                                <span>Rate a Driver</span>
+                            </div>
+                            <?php endif; ?>
                         </div>
+                    </div>
+                </div>
+
+                <!-- End Session / Simulate Trip Card -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>🚗 Trip Simulation</h3>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size:0.88rem; color:#666; margin-bottom:16px;">Simulate a completed trip to trigger the driver rating screen. In the real app, this would appear automatically when a trip ends.</p>
+                        <?php if ($isVerified): ?>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+                            <div style="flex:1; min-width:140px;">
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Driver Name</label>
+                                <input type="text" id="simDriver" value="Juan Dela Cruz" class="form-control" style="padding:10px 12px; border:1px solid #ddd; border-radius:8px; width:100%; font-family:var(--font-body);">
+                            </div>
+                            <div style="flex:1; min-width:140px;">
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Start Point</label>
+                                <input type="text" id="simStart" value="Antipolo Public Market" class="form-control" style="padding:10px 12px; border:1px solid #ddd; border-radius:8px; width:100%; font-family:var(--font-body);">
+                            </div>
+                            <div style="flex:1; min-width:140px;">
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">End Point</label>
+                                <input type="text" id="simEnd" value="SM City Masinag" class="form-control" style="padding:10px 12px; border:1px solid #ddd; border-radius:8px; width:100%; font-family:var(--font-body);">
+                            </div>
+                            <div style="min-width:100px;">
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Fare (₱)</label>
+                                <input type="number" id="simFare" value="25" class="form-control" style="padding:10px 12px; border:1px solid #ddd; border-radius:8px; width:100%; font-family:var(--font-body);">
+                            </div>
+                            <button class="btn btn-secondary" id="endSessionBtn" style="padding:10px 24px; font-size:0.9rem; white-space:nowrap;">🏁 End Session</button>
+                        </div>
+                        <?php else: ?>
+                        <div style="text-align:center; padding:20px; opacity:0.5;">
+                            <span style="font-size:2rem;">🔒</span>
+                            <p style="font-size:0.85rem; margin-top:8px;">This feature requires account verification.</p>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -199,6 +253,22 @@ $initials = strtoupper(substr($username, 0, 1));
         // Sidebar toggle for mobile
         document.getElementById('sidebarToggle')?.addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        // End Session button — navigate to rating page with trip data
+        document.getElementById('endSessionBtn')?.addEventListener('click', () => {
+            const driver = document.getElementById('simDriver').value.trim();
+            const start = document.getElementById('simStart').value.trim();
+            const end = document.getElementById('simEnd').value.trim();
+            const fare = document.getElementById('simFare').value.trim();
+
+            if (!driver || !start || !end || !fare) {
+                alert('Please fill in all trip details before ending the session.');
+                return;
+            }
+
+            const params = new URLSearchParams({ driver, start, end, fare });
+            window.location.href = `rate_driver.php?${params.toString()}`;
         });
     </script>
 </body>

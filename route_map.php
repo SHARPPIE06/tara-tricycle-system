@@ -29,7 +29,7 @@ while ($row = $routes->fetch(PDO::FETCH_ASSOC)) {
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         <!-- Sidebar -->

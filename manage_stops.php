@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // manage_stops.php — Admin Stop Management
 require_once 'php/session_init.php';
 
@@ -46,7 +46,7 @@ $initials = strtoupper(substr($username, 0, 1));
     <style>
         .map-picker { height: 350px; border-radius: var(--border-radius); border: 1px solid #ddd; margin-bottom: 15px; }
     </style>
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         <aside class="sidebar" id="sidebar">
@@ -58,11 +58,30 @@ $initials = strtoupper(substr($username, 0, 1));
             <nav class="sidebar-nav">
                 <span class="nav-section-title">Overview</span>
                 <a href="dashboard_admin.php" class="nav-link" id="navDashboard">
-                    <span class="nav-icon">📊</span> Dashboard
+                    <span class="nav-icon">&#x1F4CA;</span> Dashboard
                 </a>
-                <span class="nav-section-title">Management</span>
-                <a href="manage_routes.php" class="nav-link active" id="navRoutesMgmt">
-                    <span class="nav-icon">🛤️</span> Routes & TODA
+
+                <span class="nav-section-title">User Account Management</span>
+                <a href="manage_users.php" class="nav-link" id="navUsers">
+                    <span class="nav-icon">&#x1F465;</span> Manage Users
+                </a>
+
+                <span class="nav-section-title">Routes &amp; Fare Management</span>
+                <a href="manage_routes.php" class="nav-link" id="navRoutesMgmt">
+                    <span class="nav-icon">&#x1F6E4;&#xFE0F;</span> Manage Routes
+                </a>
+
+                <span class="nav-section-title">TODAs &amp; Terminals</span>
+                <a href="manage_stops.php" class="nav-link active" id="navTODAMgmt">
+                    <span class="nav-icon">&#x1F3E2;</span> Add TODAs &amp; Terminals
+                </a>
+
+                <span class="nav-section-title">Analytics</span>
+                <a href="route_map.php" class="nav-link" id="navMapAdmin">
+                    <span class="nav-icon">&#x1F5FA;&#xFE0F;</span> Map Overview
+                </a>
+                <a href="feedback.php" class="nav-link" id="navFeedback">
+                    <span class="nav-icon">&#x1F4AC;</span> Feedback
                 </a>
             </nav>
             <div class="sidebar-footer">

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // feedback.php
 require_once 'php/session_init.php';
 
@@ -47,7 +47,7 @@ if ($role === 'admin') {
             color: var(--yellow);
         }
     </style>
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         <aside class="sidebar" id="sidebar">
@@ -57,31 +57,32 @@ if ($role === 'admin') {
             </div>
             
             <nav class="sidebar-nav">
-                <span class="nav-section-title">Main</span>
-                <a href="dashboard_user.php" class="nav-link" id="navDashboard">
-                    <span class="nav-icon">📊</span> Dashboard
-                </a>
-                <a href="route_map.php" class="nav-link" id="navMap">
-                    <span class="nav-icon">🗺️</span> Route Map
-                </a>
-                <a href="fare_estimator.php" class="nav-link" id="navFare">
-                    <span class="nav-icon">💰</span> Fare Estimator
-                </a>
-                
-                <span class="nav-section-title">Search</span>
-                <a href="route_map.php" class="nav-link" id="navRoutes">
-                    <span class="nav-icon">🛤️</span> Routes
-                </a>
-                <a href="terminals.php" class="nav-link" id="navTODA">
-                    <span class="nav-icon">🏢</span> TODA / Terminals
+                <span class="nav-section-title">Overview</span>
+                <a href="dashboard_admin.php" class="nav-link" id="navDashboard">
+                    <span class="nav-icon">&#x1F4CA;</span> Dashboard
                 </a>
 
-                <span class="nav-section-title">Account</span>
-                <a href="profile.php" class="nav-link" id="navProfile">
-                    <span class="nav-icon">👤</span> My Profile
+                <span class="nav-section-title">User Account Management</span>
+                <a href="manage_users.php" class="nav-link" id="navUsers">
+                    <span class="nav-icon">&#x1F465;</span> Manage Users
                 </a>
-                <a href="saved_locations.php" class="nav-link" id="navSaved">
-                    <span class="nav-icon">📌</span> Saved Locations
+
+                <span class="nav-section-title">Routes &amp; Fare Management</span>
+                <a href="manage_routes.php" class="nav-link" id="navRoutesMgmt">
+                    <span class="nav-icon">&#x1F6E4;&#xFE0F;</span> Manage Routes
+                </a>
+
+                <span class="nav-section-title">TODAs &amp; Terminals</span>
+                <a href="manage_stops.php" class="nav-link" id="navTODAMgmt">
+                    <span class="nav-icon">&#x1F3E2;</span> Add TODAs &amp; Terminals
+                </a>
+
+                <span class="nav-section-title">Analytics</span>
+                <a href="route_map.php" class="nav-link" id="navMapAdmin">
+                    <span class="nav-icon">&#x1F5FA;&#xFE0F;</span> Map Overview
+                </a>
+                <a href="feedback.php" class="nav-link active" id="navFeedback">
+                    <span class="nav-icon">&#x1F4AC;</span> Feedback
                 </a>
             </nav>
             

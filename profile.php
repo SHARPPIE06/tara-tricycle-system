@@ -28,7 +28,7 @@ $initials = strtoupper(substr($userData['username'], 0, 1));
     <title>My Profile - TARA</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         <aside class="sidebar" id="sidebar">

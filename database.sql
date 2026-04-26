@@ -2,12 +2,25 @@
 
 CREATE TYPE user_role AS ENUM ('user', 'admin');
 
+CREATE TYPE verification_status AS ENUM ('pending', 'verified', 'rejected');
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
+    first_name VARCHAR(100),
+    middle_name VARCHAR(100),
+    last_name VARCHAR(100),
+    age INT,
+    birthdate DATE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     role user_role DEFAULT 'user',
+    status verification_status DEFAULT 'pending',
+    classifications JSONB,
+    toda_name VARCHAR(100),
+    home_address VARCHAR(255),
+    member_number VARCHAR(50),
+    id_documents JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -9,42 +9,33 @@
     <meta name="description" content="TARA: A route and fare tracking system that helps commuters and drivers access clearer tricycle routes, fare estimates, terminals, and transport information in Rizal Province.">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/welcome.css">
+    <link rel="icon" type="image/png" href="assets/icon.png">
 </head>
 <body>
-    
-    <section class="welcome-section" id="welcomeSection">
-        <!-- Left Content -->
-        <div class="welcome-left">
-            <div class="welcome-content">
-                <p class="welcome-label">Welcome to</p>
-                
-                <h1 class="logo-text" id="logoText">
-                    T<span class="logo-icon">🛺</span>RA
-                </h1>
-                
-                <h2 class="subtitle">Tricycle Assistance for Routes<br>and Fares</h2>
-                
-                <p class="description">
-                    A route and fare tracking system that helps commuters and drivers access clearer tricycle routes, fare estimates, terminals, and transport information.
-                </p>
-                
-                <div class="action-buttons">
-                    <a href="login.php" class="btn btn-primary btn-large" id="proceedBtn">Proceed</a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Right Image -->
-        <div class="welcome-right">
-            <div class="welcome-image">
-                <img src="assets/tricycle-welcome.png" alt="Philippine Tricycle" id="welcomeImg">
-            </div>
-            <div class="welcome-image-overlay"></div>
-        </div>
-    </section>
+    <main class="welcome-screen">
+        <div class="overlay"></div>
 
-    <script src="js/main.js"></script>
+        <section class="welcome-content">
+            <p class="welcome-text">Welcome to</p>
+
+            <img 
+                src="assets/tara-logo.png" 
+                alt="TARA Logo" 
+                class="tara-logo"
+            />
+
+            <h1 class="tagline">Tricycle Assistance for Routes and Fares</h1>
+
+            <p class="description">
+                A route and fare tracking system that helps commuters and drivers access clearer tricycle routes, fare estimates, terminals, and transport information.
+            </p>
+        </section>
+
+        <!-- Using anchor tag directly to login.php to mimic the button design -->
+        <button class="proceed-btn" id="proceedBtn" onclick="window.location.href='login.php'">
+            Proceed
+        </button>
+    </main>
 </body>
 </html>

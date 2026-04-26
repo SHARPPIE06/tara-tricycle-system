@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // manage_routes.php — Admin Route Management
 require_once 'php/session_init.php';
 
@@ -30,7 +30,7 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
         .form-row .form-group { flex: 1; margin-bottom: 0; }
         .map-picker { height: 300px; border-radius: var(--border-radius); border: 1px solid #ddd; margin-bottom: 15px; }
     </style>
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         
@@ -44,20 +44,30 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
             <nav class="sidebar-nav">
                 <span class="nav-section-title">Overview</span>
                 <a href="dashboard_admin.php" class="nav-link" id="navDashboard">
-                    <span class="nav-icon">📊</span> Dashboard
+                    <span class="nav-icon">&#x1F4CA;</span> Dashboard
                 </a>
 
-                <span class="nav-section-title">Management</span>
-                <a href="#" class="nav-link" id="navUsers">
-                    <span class="nav-icon">👥</span> Users
+                <span class="nav-section-title">User Account Management</span>
+                <a href="manage_users.php" class="nav-link" id="navUsers">
+                    <span class="nav-icon">&#x1F465;</span> Manage Users
                 </a>
+
+                <span class="nav-section-title">Routes &amp; Fare Management</span>
                 <a href="manage_routes.php" class="nav-link active" id="navRoutesMgmt">
-                    <span class="nav-icon">🛤️</span> Routes & TODA
+                    <span class="nav-icon">&#x1F6E4;&#xFE0F;</span> Manage Routes
                 </a>
-                
+
+                <span class="nav-section-title">TODAs &amp; Terminals</span>
+                <a href="manage_stops.php" class="nav-link" id="navTODAMgmt">
+                    <span class="nav-icon">&#x1F3E2;</span> Add TODAs &amp; Terminals
+                </a>
+
                 <span class="nav-section-title">Analytics</span>
-                <a href="#" class="nav-link" id="navReports">
-                    <span class="nav-icon">📈</span> Reports
+                <a href="route_map.php" class="nav-link" id="navMapAdmin">
+                    <span class="nav-icon">&#x1F5FA;&#xFE0F;</span> Map Overview
+                </a>
+                <a href="feedback.php" class="nav-link" id="navFeedback">
+                    <span class="nav-icon">&#x1F4AC;</span> Feedback
                 </a>
             </nav>
             

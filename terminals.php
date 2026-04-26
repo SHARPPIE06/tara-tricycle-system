@@ -23,7 +23,7 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
     <title>TODA Terminals - TARA</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         <aside class="sidebar" id="sidebar">

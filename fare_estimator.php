@@ -21,8 +21,10 @@ while ($row = $routes->fetch(PDO::FETCH_ASSOC)) {
     $routesData[] = $row;
 }
 
-// Fetch PWD settings
-$pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'pwd_discount_enabled'")->fetch(PDO::FETCH_ASSOC)['setting_value'] ?? '0';
+// Automatic discount logic
+require_once 'php/discount_helper.php';
+$hasDiscount = userQualifiesForDiscount();
+$classifications = $_SESSION['classifications'] ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,7 +48,7 @@ $pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key
         .fare-result-box h4 { font-size: 0.9rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .fare-result-box .fare-amount { font-size: 2.5rem; font-weight: 800; color: var(--navy); }
     </style>
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         
@@ -133,10 +135,12 @@ $pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key
                                     <small style="color:#666; margin-top:5px; display:block;">Enter distance manually, or click on the map to calculate distance from terminal.</small>
                                 </div>
 
-                                <?php if($pwdEnabled == '1'): ?>
-                                <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:15px; background:#f9fafb; padding:10px; border-radius:8px;">
-                                    <input type="checkbox" id="is_pwd" style="width:20px; height:20px; cursor:pointer;">
-                                    <label for="is_pwd" style="margin-bottom:0; cursor:pointer; font-size:0.9rem; font-weight:600;">PWD / Senior / Student (20% Discount)</label>
+                                <?php if($hasDiscount): ?>
+                                <div class="form-group" style="margin-top:15px; background:#f0fdf4; padding:12px 14px; border-radius:10px; border:1px solid #bbf7d0;">
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:1.2rem;">✅</span>
+                                        <span style="font-size:0.88rem; font-weight:600; color:#15803d;">20% Discount Auto-Applied (<?php echo htmlspecialchars(implode(', ', array_intersect($classifications, ['Student','PWD','Senior Citizen']))); ?>)</span>
+                                    </div>
                                 </div>
                                 <?php endif; ?>
                                 
@@ -147,6 +151,10 @@ $pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key
                                 <h4>Estimated Fare</h4>
                                 <div class="fare-amount" id="fareAmount">₱0.00</div>
                                 <p style="font-size:0.8rem; color:#666; margin-top:10px;" id="fareBreakdown"></p>
+                                <?php if($hasDiscount): ?>
+                                <div id="discountLine" style="margin-top:8px; font-size:0.85rem; color:#15803d; font-weight:600;"></div>
+                                <div id="finalFareLine" style="margin-top:4px; font-size:1.4rem; font-weight:800; color:var(--navy);"></div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -190,7 +198,6 @@ $pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key
             const fareResultBox = document.getElementById('fareResultBox');
             const fareAmount = document.getElementById('fareAmount');
             const fareBreakdown = document.getElementById('fareBreakdown');
-            const isPwdCheck = document.getElementById('is_pwd');
 
             // Haversine formula to calculate distance in km
             function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -258,6 +265,8 @@ $pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key
             });
 
             // Calculate Fare Logic
+            const autoDiscount = <?php echo $hasDiscount ? 'true' : 'false'; ?>;
+            
             calcBtn.addEventListener('click', () => {
                 const selectedOption = routeSelect.options[routeSelect.selectedIndex];
                 if (!selectedOption.value) {
@@ -283,15 +292,24 @@ $pwdEnabled = $conn->query("SELECT setting_value FROM settings WHERE setting_key
                     totalFare += (extraKm * perKmFare);
                 }
 
-                let discountText = "";
-                if (isPwdCheck && isPwdCheck.checked) {
+                fareBreakdown.textContent = `Base Fare: ₱${baseFare.toFixed(2)} (1st KM) + ₱${(extraKm * perKmFare).toFixed(2)} (${extraKm.toFixed(2)} KM extra)`;
+
+                if (autoDiscount) {
                     const discount = totalFare * 0.20;
-                    totalFare -= discount;
-                    discountText = ` | Discount (20%): -₱${discount.toFixed(2)}`;
+                    const discounted = totalFare - discount;
+                    fareAmount.textContent = `₱${totalFare.toFixed(2)}`;
+                    fareAmount.style.textDecoration = 'line-through';
+                    fareAmount.style.fontSize = '1.5rem';
+                    fareAmount.style.color = '#999';
+                    document.getElementById('discountLine').textContent = `20% Discount: -₱${discount.toFixed(2)}`;
+                    document.getElementById('finalFareLine').textContent = `Your Fare: ₱${discounted.toFixed(2)}`;
+                } else {
+                    fareAmount.textContent = `₱${totalFare.toFixed(2)}`;
+                    fareAmount.style.textDecoration = 'none';
+                    fareAmount.style.fontSize = '2.5rem';
+                    fareAmount.style.color = 'var(--navy)';
                 }
 
-                fareAmount.textContent = `₱${totalFare.toFixed(2)}`;
-                fareBreakdown.textContent = `Base Fare: ₱${baseFare.toFixed(2)} (1st KM) + ₱${(extraKm * perKmFare).toFixed(2)} (${extraKm.toFixed(2)} KM extra)${discountText}`;
                 fareResultBox.style.display = 'block';
             });
         });

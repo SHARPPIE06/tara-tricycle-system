@@ -1,19 +1,103 @@
 .auth-section {
   min-height: 100vh;
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: #f4f6f9;
+  background-image: url('../assets/welcomebg-tricycle-desktop.png');
+  background-size: cover;
+  background-position: center;
   padding: 20px;
+  animation: fadeInBackground 1.2s ease-out forwards;
+  opacity: 0;
+}
+
+.auth-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right,
+      var(--navy) 0%,
+      rgba(8, 14, 49, 0.85) 40%,
+      rgba(8, 14, 49, 0) 80%);
+  z-index: 1;
+}
+
+.auth-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-left: clamp(30px, 8vw, 140px);
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 0;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .auth-section {
+    background-image: url('../assets/welcomebg-tricycle.png');
+  }
+
+  .auth-overlay {
+    background: none;
+  }
+
+  .auth-container {
+    padding-left: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .auth-card {
+    max-width: 290px;
+  }
+
+  .auth-header {
+    padding: 15px 12px;
+  }
+
+  .auth-logo {
+    max-width: 170px;
+    margin-bottom: 5px;
+  }
+
+  .auth-header p {
+    font-size: 0.8rem;
+  }
+
+  .auth-body {
+    padding: 16px;
+  }
+
+  .form-control {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
 }
 
 .auth-card {
-  background: var(--white);
+  background: transparent;
   border-radius: var(--border-radius-lg);
   box-shadow: 0 10px 30px rgba(8, 14, 49, 0.08);
   width: 100%;
   max-width: 450px;
   overflow: hidden;
+  animation: slideInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+  transform: translateZ(0);
 }
 
 .auth-header {
@@ -21,12 +105,17 @@
   color: var(--white);
   padding: 30px 20px;
   text-align: center;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
 }
 
-.auth-header h2 {
-  color: var(--white);
-  font-size: 2rem;
-  margin-bottom: 5px;
+.auth-logo {
+  max-width: 260px;
+  height: auto;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  animation: bounceInTop 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
 }
 
 .auth-header p {
@@ -35,7 +124,89 @@
 }
 
 .auth-body {
+  background: var(--white);
   padding: 30px;
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.auth-body::-webkit-scrollbar {
+  width: 6px;
+}
+.auth-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0 0 var(--border-radius-lg) 0;
+}
+.auth-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+.auth-body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  color: var(--navy);
+  margin-top: 15px;
+  margin-bottom: 5px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 5px;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+}
+
+.class-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--navy);
+  cursor: pointer;
+}
+
+.upload-group-title {
+  font-size: 0.95rem;
+  color: var(--navy);
+  margin-bottom: 10px;
+  margin-top: 15px;
+}
+
+.file-input {
+  padding: 8px;
+  font-size: 0.85rem;
 }
 
 .form-group {
@@ -105,4 +276,45 @@
   color: #15803d;
   border: 1px solid #86efac;
   display: block;
+}
+
+/* Animations */
+@keyframes fadeInBackground {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceInTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  45% {
+    opacity: 1;
+    transform: translateY(8px);
+  }
+  70% {
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

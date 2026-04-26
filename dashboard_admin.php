@@ -22,11 +22,12 @@ $initials = strtoupper(substr($username, 0, 1));
 // Fetch stats from DB
 require_once 'php/db_connect.php';
 $userCount = $conn->query("SELECT COUNT(*) as c FROM users")->fetch(PDO::FETCH_ASSOC)['c'];
+$pendingCount = $conn->query("SELECT COUNT(*) as c FROM users WHERE status = 'pending'")->fetch(PDO::FETCH_ASSOC)['c'];
 $routeCount = $conn->query("SELECT COUNT(*) as c FROM routes")->fetch(PDO::FETCH_ASSOC)['c'];
 $stopCount = $conn->query("SELECT COUNT(*) as c FROM stops")->fetch(PDO::FETCH_ASSOC)['c'];
 
 // Fetch recent users
-$recentUsers = $conn->query("SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC LIMIT 5");
+$recentUsers = $conn->query("SELECT id, username, first_name, last_name, email, role, status, created_at FROM users ORDER BY created_at DESC LIMIT 5");
 
 // Fetch unread feedback count
 $unreadFeedbackCount = $conn->query("SELECT COUNT(*) as c FROM reviews")->fetch(PDO::FETCH_ASSOC)['c'] ?? 0;
@@ -51,7 +52,7 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-</head>
+    <link rel="icon" type="image/png" href="assets/icon.png"></head>
 <body>
     <div class="dashboard-wrapper">
         
@@ -68,29 +69,27 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                     <span class="nav-icon">📊</span> Dashboard
                 </a>
 
-                <span class="nav-section-title">Management</span>
+                <span class="nav-section-title">User Account Management</span>
                 <a href="manage_users.php" class="nav-link" id="navUsers">
-                    <span class="nav-icon">👥</span> Users
+                    <span class="nav-icon">👥</span> Manage Users
+                    <?php if($pendingCount > 0): ?>
+                        <span class="nav-badge" style="background:#f87171; color:white; font-size:0.65rem; padding:2px 6px; border-radius:10px; margin-left:auto; font-weight:700;"><?php echo $pendingCount; ?></span>
+                    <?php endif; ?>
                 </a>
+
+                <span class="nav-section-title">Routes & Fare Management</span>
                 <a href="manage_routes.php" class="nav-link" id="navRoutesMgmt">
-                    <span class="nav-icon">🛤️</span> Routes & TODA
+                    <span class="nav-icon">🛤️</span> Manage Routes
                 </a>
-                <a href="manage_routes.php" class="nav-link" id="navFareMgmt">
-                    <span class="nav-icon">💰</span> Fares
-                </a>
-                <a href="manage_routes.php" class="nav-link" id="navStopsMgmt">
-                    <span class="nav-icon">📍</span> Stops & Terminals
-                </a>
-                <a href="manage_routes.php" class="nav-link" id="navTODAMgmt">
-                    <span class="nav-icon">🏢</span> TODA
+
+                <span class="nav-section-title">TODAs & Terminals</span>
+                <a href="manage_stops.php" class="nav-link" id="navTODAMgmt">
+                    <span class="nav-icon">🏢</span> Add TODAs & Terminals
                 </a>
 
                 <span class="nav-section-title">Analytics</span>
                 <a href="route_map.php" class="nav-link" id="navMapAdmin">
                     <span class="nav-icon">🗺️</span> Map Overview
-                </a>
-                <a href="reports.php" class="nav-link" id="navReports">
-                    <span class="nav-icon">📈</span> Reports
                 </a>
                 <a href="feedback.php" class="nav-link" id="navFeedback">
                     <span class="nav-icon">💬</span> Feedback
@@ -126,11 +125,18 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
             <div class="page-content">
                 <!-- Stats -->
                 <div class="stats-grid">
-                    <a href="manage_routes.php" class="stat-card" style="text-decoration:none; color:inherit;">
+                    <a href="manage_users.php" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon blue">👥</div>
                         <div class="stat-info">
                             <h3><?php echo $userCount; ?></h3>
                             <p>Total Users</p>
+                        </div>
+                    </a>
+                    <a href="manage_users.php" class="stat-card" style="text-decoration:none; color:inherit;">
+                        <div class="stat-icon" style="background:rgba(251,191,36,0.1);color:#f59e0b;">⏳</div>
+                        <div class="stat-info">
+                            <h3><?php echo $pendingCount; ?></h3>
+                            <p>Pending Approval</p>
                         </div>
                     </a>
                     <a href="manage_routes.php" class="stat-card" style="text-decoration:none; color:inherit;">
@@ -235,13 +241,18 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                             </thead>
                             <tbody>
                                 <?php while ($row = $recentUsers ? $recentUsers->fetch(PDO::FETCH_ASSOC) : false): ?>
+                                <?php 
+                                    $displayName = $row['first_name'] ? htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) : htmlspecialchars($row['username']);
+                                    $statusVal = $row['status'] ?? 'pending';
+                                    $statusClass = $statusVal === 'verified' ? 'badge-active' : ($statusVal === 'rejected' ? 'badge-inactive' : 'badge-pending');
+                                ?>
                                 <tr>
                                     <td><?php echo $row['id']; ?></td>
-                                    <td><?php echo htmlspecialchars($row['username']); ?></td>
+                                    <td><?php echo $displayName; ?></td>
                                     <td><?php echo htmlspecialchars($row['email']); ?></td>
                                     <td><span class="badge <?php echo $row['role'] === 'admin' ? 'badge-pending' : 'badge-active'; ?>"><?php echo ucfirst($row['role']); ?></span></td>
                                     <td><?php echo date('M d, Y', strtotime($row['created_at'])); ?></td>
-                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td><span class="badge <?php echo $statusClass; ?>"><?php echo ucfirst($statusVal); ?></span></td>
                                 </tr>
                                 <?php endwhile; ?>
                             </tbody>
@@ -249,22 +260,19 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                     </div>
                 </div>
 
-                <!-- System Settings -->
+                <!-- Automatic Discount Info -->
                 <div class="content-card">
                     <div class="card-header">
-                        <h3>⚙️ System Settings</h3>
+                        <h3>⚙️ Automatic Discount Policy</h3>
                     </div>
                     <div class="card-body">
-                        <?php if(isset($_GET['settings_success'])) echo "<div class='alert success' style='display:block'>Settings updated!</div>"; ?>
-                        <form action="php/settings_action.php" method="POST">
-                            <div class="form-group" style="display:flex; align-items:center; gap:15px;">
-                                <label style="margin-bottom:0; cursor:pointer;">
-                                    <input type="checkbox" name="pwd_discount_enabled" value="1" <?php echo $pwdEnabled == '1' ? 'checked' : ''; ?>>
-                                    Enable PWD / Student / Senior Discount (20%)
-                                </label>
-                                <button type="submit" class="btn btn-primary" style="padding:6px 15px; font-size:0.8rem;">Save Changes</button>
+                        <div style="display:flex; align-items:flex-start; gap:14px; padding:12px 16px; background:#f0fdf4; border-radius:12px; border:1px solid #bbf7d0;">
+                            <span style="font-size:1.6rem;">✅</span>
+                            <div>
+                                <strong style="color:#15803d;">20% Discount — Always Active</strong>
+                                <p style="font-size:0.85rem; color:#166534; margin-top:4px;">A mandatory 20% discount is automatically applied for verified users classified as <strong>Student</strong>, <strong>PWD</strong>, or <strong>Senior Citizen</strong>. No manual toggle is required — the system detects and applies the discount instantly based on the user's account classification.</p>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
 
