@@ -98,7 +98,7 @@ $initials = strtoupper(substr($username, 0, 1));
             <header class="top-bar">
                 <div style="display:flex;align-items:center;gap:12px;">
                     <a href="manage_routes.php" style="text-decoration:none; color:var(--navy); font-size:1.5rem;">←</a>
-                    <h2>Stops for <?php echo htmlspecialchars($route['toda_name']); ?></h2>
+                    <h2>Stops for <?php echo htmlspecialchars($route['toda_name'] ?? ''); ?></h2>
                 </div>
             </header>
 
@@ -152,7 +152,7 @@ $initials = strtoupper(substr($username, 0, 1));
                                     <?php if($stops->rowCount() > 0): ?>
                                         <?php while ($row = $stops->fetch(PDO::FETCH_ASSOC)): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($row['stop_name']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['stop_name'] ?? ''); ?></td>
                                             <td><small><?php echo number_format($row['lat'], 4) . ', ' . number_format($row['lng'], 4); ?></small></td>
                                             <td>
                                                 <form action="php/route_action.php" method="POST" style="display:inline;" onsubmit="return confirm('Delete this stop?');">

@@ -129,7 +129,7 @@ $classifications = $_SESSION['classifications'] ?? [];
                             <option value="all">Show All Terminals</option>
                             <?php foreach($routesData as $route): ?>
                                 <option value="<?php echo $route['id']; ?>" data-lat="<?php echo $route['terminal_lat']; ?>" data-lng="<?php echo $route['terminal_lng']; ?>">
-                                    <?php echo htmlspecialchars($route['toda_name']); ?>
+                                    <?php echo htmlspecialchars($route['toda_name'] ?? ''); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

@@ -336,7 +336,7 @@ $initials = strtoupper(substr($username, 0, 1));
                             <tbody>
                                 <?php while ($row = $users->fetch(PDO::FETCH_ASSOC)): ?>
                                 <?php 
-                                    $fullName = $row['first_name'] ? htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) : htmlspecialchars($row['username']);
+                                    $fullName = $row['first_name'] ? htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) : htmlspecialchars($row['username'] ?? 'Unknown');
                                     $classifications = $row['classifications'] ? json_decode($row['classifications'], true) : [];
                                     $statusVal = $row['status'] ?? 'pending';
                                     $statusClass = $statusVal === 'verified' ? 'badge-active' : ($statusVal === 'rejected' ? 'badge-inactive' : 'badge-pending');
@@ -348,7 +348,7 @@ $initials = strtoupper(substr($username, 0, 1));
                                     data-lastname="<?php echo htmlspecialchars($row['last_name'] ?? ''); ?>"
                                     data-age="<?php echo $row['age'] ?? ''; ?>"
                                     data-birthdate="<?php echo $row['birthdate'] ?? ''; ?>"
-                                    data-email="<?php echo htmlspecialchars($row['email']); ?>"
+                                    data-email="<?php echo htmlspecialchars($row['email'] ?? ''); ?>"
                                     data-role="<?php echo $row['role']; ?>"
                                     data-status-val="<?php echo $statusVal; ?>"
                                     data-classifications='<?php echo htmlspecialchars($row['classifications'] ?? '[]'); ?>'
@@ -360,7 +360,7 @@ $initials = strtoupper(substr($username, 0, 1));
                                 >
                                     <td><?php echo $row['id']; ?></td>
                                     <td style="font-weight:600;"><?php echo $fullName; ?></td>
-                                    <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['email'] ?? ''); ?></td>
                                     <td><span class="badge <?php echo $row['role'] === 'admin' ? 'badge-pending' : 'badge-active'; ?>"><?php echo ucfirst($row['role']); ?></span></td>
                                     <td>
                                         <?php foreach ($classifications as $cls): ?>

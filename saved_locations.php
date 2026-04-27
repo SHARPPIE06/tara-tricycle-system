@@ -132,8 +132,8 @@ $result = $saved;
                                     <?php if($result->rowCount() > 0): ?>
                                         <?php while ($row = $result->fetch(PDO::FETCH_ASSOC)): ?>
                                         <tr>
-                                            <td style="font-weight:600;"><?php echo htmlspecialchars($row['label']); ?></td>
-                                            <td><small><?php echo htmlspecialchars($row['lat']) . ', ' . htmlspecialchars($row['lng']); ?></small></td>
+                                            <td style="font-weight:600;"><?php echo htmlspecialchars($row['label'] ?? ''); ?></td>
+                                            <td><small><?php echo htmlspecialchars($row['lat'] ?? '') . ', ' . htmlspecialchars($row['lng'] ?? ''); ?></small></td>
                                             <td>
                                                 <form action="php/saved_action.php" method="POST" style="display:inline;">
                                                     <input type="hidden" name="action" value="delete">

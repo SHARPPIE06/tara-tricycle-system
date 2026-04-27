@@ -108,7 +108,7 @@ $routes = $conn->query($routesQuery);
                                 <?php if($routes->rowCount() > 0): ?>
                                     <?php while ($row = $routes->fetch(PDO::FETCH_ASSOC)): ?>
                                     <tr>
-                                        <td style="font-weight:600;"><?php echo htmlspecialchars($row['toda_name']); ?></td>
+                                        <td style="font-weight:600;"><?php echo htmlspecialchars($row['toda_name'] ?? ''); ?></td>
                                         <td><small><?php echo number_format($row['terminal_lat'], 4) . ', ' . number_format($row['terminal_lng'], 4); ?></small></td>
                                         <td><span class="badge badge-active"><?php echo $row['stop_count']; ?> Stops</span></td>
                                         <td>

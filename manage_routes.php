@@ -162,7 +162,7 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                                         <?php while ($row = $routes->fetch(PDO::FETCH_ASSOC)): ?>
                                         <tr>
                                             <td><?php echo $row['id']; ?></td>
-                                            <td><?php echo htmlspecialchars($row['toda_name']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['toda_name'] ?? ''); ?></td>
                                             <td>₱<?php echo number_format($row['base_fare'], 2); ?></td>
                                             <td>₱<?php echo number_format($row['per_km_fare'], 2); ?></td>
                                             <td style="font-size:0.75rem; color:#666;">
@@ -174,7 +174,7 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                                                 
                                                 <button type="button" class="btn btn-primary edit-btn" 
                                                     data-id="<?php echo $row['id']; ?>"
-                                                    data-name="<?php echo htmlspecialchars($row['toda_name']); ?>"
+                                                    data-name="<?php echo htmlspecialchars($row['toda_name'] ?? ''); ?>"
                                                     data-base="<?php echo $row['base_fare']; ?>"
                                                     data-perkm="<?php echo $row['per_km_fare']; ?>"
                                                     data-lat="<?php echo $row['terminal_lat']; ?>"

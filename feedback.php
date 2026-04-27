@@ -138,7 +138,7 @@ if ($role === 'admin') {
                 if(isset($_GET['success'])) echo "<div class='alert success' style='display:block'>".htmlspecialchars($_GET['success'])."</div>";
                 if(isset($_GET['error'])) echo "<div class='alert error' style='display:block'>".htmlspecialchars($_GET['error'])."</div>";
                 ?>
-                <div class="stats-grid" style="grid-template-columns: <?php echo ($role === 'admin' || $isDriver) ? '1fr' : '1fr 2fr'; ?>;">
+                <div class="stats-grid" style="grid-template-columns: 1fr;">
                     <?php if (!$role === 'admin' && !$isDriver): ?>
                     <!-- Rate Form (Only for Commuters) -->
                     <div class="content-card">
@@ -185,7 +185,7 @@ if ($role === 'admin') {
                                 </div>
                                 <div class="form-group">
                                     <label>Comments</label>
-                                    <textarea name="comment" class="form-control" rows="3" placeholder="How was your ride?"></textarea>
+                                    <textarea name="comment" class="form-control" rows="5" placeholder="How was your ride?"></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary auth-btn">Submit Review</button>
                             </form>

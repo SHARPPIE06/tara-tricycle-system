@@ -106,7 +106,7 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                                 <?php if($routes->rowCount() > 0): ?>
                                     <?php while ($row = $routes->fetch(PDO::FETCH_ASSOC)): ?>
                                     <tr>
-                                        <td style="font-weight:600;"><?php echo htmlspecialchars($row['toda_name']); ?></td>
+                                        <td style="font-weight:600;"><?php echo htmlspecialchars($row['toda_name'] ?? ''); ?></td>
                                         <td>₱<?php echo number_format($row['base_fare'], 2); ?></td>
                                         <td>₱<?php echo number_format($row['per_km_fare'], 2); ?></td>
                                         <td>

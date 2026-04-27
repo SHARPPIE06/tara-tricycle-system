@@ -196,7 +196,7 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                                 <?php if($recentFeedback && $recentFeedback->rowCount() > 0): ?>
                                     <?php while ($row = $recentFeedback->fetch(PDO::FETCH_ASSOC)): ?>
                                     <tr>
-                                        <td><strong><?php echo htmlspecialchars($row['username']); ?></strong></td>
+                                        <td><strong><?php echo htmlspecialchars($row['username'] ?? 'Unknown'); ?></strong></td>
                                         <td>
                                             <small><?php echo htmlspecialchars($row['driver_name'] ?: 'N/A'); ?></small>
                                             <small style="display:block; color:#666;"><?php echo htmlspecialchars($row['toda_name'] ?? ''); ?></small>
@@ -245,14 +245,14 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                             <tbody>
                                 <?php while ($row = $recentUsers ? $recentUsers->fetch(PDO::FETCH_ASSOC) : false): ?>
                                 <?php 
-                                    $displayName = $row['first_name'] ? htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) : htmlspecialchars($row['username']);
+                                    $displayName = $row['first_name'] ? htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) : htmlspecialchars($row['username'] ?? 'Unknown');
                                     $statusVal = $row['status'] ?? 'pending';
                                     $statusClass = $statusVal === 'verified' ? 'badge-active' : ($statusVal === 'rejected' ? 'badge-inactive' : 'badge-pending');
                                 ?>
                                 <tr>
                                     <td><?php echo $row['id']; ?></td>
                                     <td><?php echo $displayName; ?></td>
-                                    <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['email'] ?? ''); ?></td>
                                     <td><span class="badge <?php echo $row['role'] === 'admin' ? 'badge-pending' : 'badge-active'; ?>"><?php echo ucfirst($row['role']); ?></span></td>
                                     <td><?php echo date('M d, Y', strtotime($row['created_at'])); ?></td>
                                     <td><span class="badge <?php echo $statusClass; ?>"><?php echo ucfirst($statusVal); ?></span></td>

@@ -87,7 +87,7 @@ $initials = strtoupper(substr($userData['username'], 0, 1));
                     <h2>My Profile</h2>
                 </div>
                 <div class="user-info">
-                    <div class="user-name"><?php echo htmlspecialchars($userData['username']); ?></div>
+                    <div class="user-name"><?php echo htmlspecialchars($userData['username'] ?? 'User'); ?></div>
                     <div class="user-avatar"><?php echo $initials; ?></div>
                 </div>
             </header>
@@ -107,11 +107,11 @@ $initials = strtoupper(substr($userData['username'], 0, 1));
                                 <input type="hidden" name="action" value="update_profile">
                                 <div class="form-group">
                                     <label>Email Address</label>
-                                    <input type="text" class="form-control" value="<?php echo htmlspecialchars($userData['email']); ?>" disabled style="background:#f4f6f9; cursor:not-allowed;">
+                                    <input type="text" class="form-control" value="<?php echo htmlspecialchars($userData['email'] ?? ''); ?>" disabled style="background:#f4f6f9; cursor:not-allowed;">
                                 </div>
                                 <div class="form-group">
                                     <label>Username</label>
-                                    <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($userData['username']); ?>" required>
+                                    <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($userData['username'] ?? ''); ?>" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary auth-btn">Save Changes</button>
                             </form>
