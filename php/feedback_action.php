@@ -19,6 +19,7 @@ if ($role === 'admin') {
 
 if ($action === 'submit') {
     $rating = intval($_POST['rating'] ?? 5);
+    $driver_id = intval($_POST['driver_id'] ?? 0);
     $driver_name = trim($_POST['driver_name'] ?? '');
     $route_id = intval($_POST['route_id'] ?? 0);
     $comment = trim($_POST['comment'] ?? '');
@@ -28,9 +29,16 @@ if ($action === 'submit') {
         exit();
     }
     
-    $stmt = $conn->prepare("INSERT INTO reviews (user_id, driver_name, route_id, rating, comment) VALUES (?, ?, ?, ?, ?)");
+    // Insert with driver_id if provided
+    if ($driver_id > 0) {
+        $stmt = $conn->prepare("INSERT INTO reviews (user_id, driver_id, driver_name, route_id, rating, comment) VALUES (?, ?, ?, ?, ?, ?)");
+        $success = $stmt->execute([$user_id, $driver_id, $driver_name, $route_id, $rating, $comment]);
+    } else {
+        $stmt = $conn->prepare("INSERT INTO reviews (user_id, driver_name, route_id, rating, comment) VALUES (?, ?, ?, ?, ?)");
+        $success = $stmt->execute([$user_id, $driver_name, $route_id, $rating, $comment]);
+    }
     
-    if ($stmt->execute([$user_id, $driver_name, $route_id, $rating, $comment])) {
+    if ($success) {
         header("Location: ../feedback.php?success=Review submitted successfully!");
     } else {
         header("Location: ../feedback.php?error=Failed to submit review");

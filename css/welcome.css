@@ -27,7 +27,7 @@ body {
   min-height: 100svh;
   overflow: hidden;
 
-  background-image: url('../assets/welcomebg-tricycle-mobile.png');
+  background-image: url('../assets/welcomebg-tricycle.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -78,7 +78,7 @@ body {
 }
 
 .tara-logo {
-  width: min(78vw, 430px);
+  width: min(92vw, 500px);
   height: auto;
   display: block;
   margin: 0 auto 16px;
@@ -225,7 +225,7 @@ body {
   }
 
   .tara-logo {
-    width: min(40vw, 520px);
+    width: min(50vw, 680px);
     margin: 0 0 20px 0;
   }
 

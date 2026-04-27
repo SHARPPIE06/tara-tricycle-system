@@ -46,7 +46,7 @@ $routes = $conn->query("SELECT * FROM routes ORDER BY toda_name ASC");
                 
                 <?php if ($role === 'user'): ?>
                 <span class="nav-section-title">Search</span>
-                <a href="route_map.php" class="nav-link" id="navRoutes">
+                <a href="routes.php" class="nav-link" id="navRoutes">
                     <span class="nav-icon">🛤️</span> Routes
                 </a>
                 <a href="terminals.php" class="nav-link active" id="navTODA">

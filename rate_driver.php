@@ -18,6 +18,7 @@ if ($userStatus !== 'verified') {
 }
 
 // Get simulated trip data from URL or defaults
+$driverId = $_GET['driver_id'] ?? 0;
 $driverName = $_GET['driver'] ?? 'Juan Dela Cruz';
 $startPoint = $_GET['start'] ?? 'Antipolo Public Market';
 $endPoint = $_GET['end'] ?? 'SM City Masinag';
@@ -27,6 +28,10 @@ require_once 'php/db_connect.php';
 
 // Fetch routes for the dropdown
 $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC");
+
+// Fetch verified drivers for fallback selection
+$driversQuery = $conn->query("SELECT id, first_name, last_name, username FROM users WHERE status = 'verified' AND classifications @> '[\"Driver\"]'::jsonb");
+$verifiedDrivers = $driversQuery->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,9 +49,16 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
             background-attachment: fixed;
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            padding: 20px;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        @media (min-width: 1024px) {
+            body {
+                background-image: url('assets/welcomebg-tricycle-desktop.png');
+            }
         }
 
         body::before {
@@ -62,7 +74,10 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 400px;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
@@ -73,8 +88,8 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
 
         /* TARA Logo */
         .rating-logo {
-            width: 120px;
-            margin-bottom: 20px;
+            width: 160px;
+            margin-bottom: 24px;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
 
@@ -83,51 +98,59 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
             background: var(--white);
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            width: 100%;
+            max-width: 550px;
             overflow: hidden;
             border: 3px solid var(--yellow);
         }
 
         .rating-card-body {
-            padding: 30px 28px;
+            padding: 24px 22px;
             text-align: center;
         }
 
         /* Driver Avatar */
         .driver-avatar {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background: var(--yellow);
-            margin: 0 auto 16px;
+            background: var(--white);
+            margin: 0 auto 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            border: 4px solid var(--orange);
-            box-shadow: 0 6px 20px rgba(232, 127, 36, 0.25);
+            border: 3px solid var(--yellow);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .driver-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .driver-name {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--navy);
             margin-bottom: 2px;
         }
 
         .driver-label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--orange);
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
 
         /* Route Details */
         .route-details {
             text-align: left;
-            margin-bottom: 24px;
-            padding: 16px;
+            margin-bottom: 16px;
+            padding: 12px 14px;
             background: #fffbeb;
-            border-radius: 14px;
+            border-radius: 12px;
             border: 1px solid #fef08a;
         }
 
@@ -173,29 +196,29 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
 
         /* Tip Section */
         .tip-section {
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .tip-label {
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--navy);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .tip-options {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .tip-btn {
-            padding: 8px 18px;
+            padding: 6px 14px;
             border: 2px solid #e5e7eb;
             border-radius: 20px;
             background: var(--white);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -211,7 +234,7 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
 
         /* Star Rating */
         .rating-section {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .rating-title {
@@ -255,15 +278,15 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
         /* Comment Box */
         .comment-box {
             width: 100%;
-            padding: 12px 14px;
+            padding: 10px 12px;
             border: 2px solid #e5e7eb;
             border-radius: 12px;
             font-family: var(--font-body);
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             resize: vertical;
-            min-height: 80px;
+            min-height: 60px;
             transition: border-color 0.2s;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .comment-box:focus {
@@ -274,29 +297,32 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
         /* Buttons */
         .rating-actions {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            flex-direction: row;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
         }
 
         .btn-submit-rating {
-            width: 100%;
-            padding: 14px;
+            padding: 10px 24px;
             border: none;
             border-radius: 30px;
             background: var(--yellow);
             color: var(--navy);
             font-family: var(--font-title);
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(255, 200, 30, 0.3);
+            box-shadow: 0 4px 10px rgba(255, 200, 30, 0.3);
+            width: fit-content;
+            margin: 0 auto;
         }
 
         .btn-submit-rating:hover {
             background: #ffda58;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 200, 30, 0.4);
+            box-shadow: 0 6px 15px rgba(255, 200, 30, 0.4);
         }
 
         .btn-submit-rating:disabled {
@@ -306,17 +332,17 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
         }
 
         .btn-back {
-            width: 100%;
-            padding: 14px;
+            padding: 10px 24px;
             border: 2px solid #e5e7eb;
             border-radius: 30px;
             background: var(--white);
             color: var(--navy);
             font-family: var(--font-title);
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s ease;
+            width: fit-content;
         }
 
         .btn-back:hover {
@@ -382,11 +408,12 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
 
         /* Responsive */
         @media (max-width: 480px) {
-            .rating-card-body { padding: 24px 20px; }
-            .driver-avatar { width: 80px; height: 80px; font-size: 2rem; }
+            .rating-card-body { padding: 20px 16px; }
+            .driver-avatar { width: 70px; height: 70px; font-size: 1.8rem; }
             .driver-name { font-size: 1.15rem; }
             .star { font-size: 2.2rem; }
-            .rating-logo { width: 100px; }
+            .rating-logo { width: 100px; margin-bottom: 12px; }
+            .rating-actions { flex-direction: column; }
         }
     </style>
 </head>
@@ -397,8 +424,25 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
         <div class="rating-card" id="ratingCard" style="position: relative;">
             <div class="rating-card-body">
                 <!-- Driver Info -->
-                <div class="driver-avatar">🚗</div>
-                <div class="driver-name" id="driverNameDisplay"><?php echo htmlspecialchars($driverName); ?></div>
+                <div class="driver-avatar">
+                    <img src="assets/icon.png" alt="Driver">
+                </div>
+                <?php if ($driverId == 0): ?>
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--navy); display: block; margin-bottom: 5px;">Select a Driver to Rate:</label>
+                        <select id="driverSelector" class="form-control" style="padding: 10px; border-radius: 10px; border: 2px solid var(--yellow); width: 100%; font-weight: 600;">
+                            <option value="0">-- Select Driver --</option>
+                            <?php foreach ($verifiedDrivers as $d): 
+                                $dName = ($d['first_name'] || $d['last_name']) ? ($d['first_name'] . ' ' . $d['last_name']) : $d['username'];
+                            ?>
+                                <option value="<?php echo $d['id']; ?>"><?php echo htmlspecialchars($dName); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="driver-name" id="driverNameDisplay" style="display:none;"><?php echo htmlspecialchars($driverName); ?></div>
+                <?php else: ?>
+                    <div class="driver-name" id="driverNameDisplay"><?php echo htmlspecialchars($driverName); ?></div>
+                <?php endif; ?>
                 <div class="driver-label">Your Driver</div>
 
                 <!-- Route Details -->
@@ -464,7 +508,7 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
                 <div class="success-icon">🎉</div>
                 <div class="success-title">Thank You!</div>
                 <div class="success-msg">Your rating has been submitted successfully.</div>
-                <button class="btn-submit-rating" onclick="window.location.href='dashboard_user.php'" style="max-width:220px;">Back to Dashboard</button>
+                <button class="btn-submit-rating" onclick="window.location.href='dashboard_user.php'">Back to Dashboard</button>
             </div>
         </div>
     </div>
@@ -541,9 +585,24 @@ $routes = $conn->query("SELECT id, toda_name FROM routes ORDER BY toda_name ASC"
             btn.textContent = 'Submitting...';
 
             const comment = document.getElementById('commentBox').value.trim();
-            const driverName = document.getElementById('driverNameDisplay').textContent;
+            let driverName = document.getElementById('driverNameDisplay').textContent;
+            let finalDriverId = '<?php echo $driverId; ?>';
+
+            const driverSelector = document.getElementById('driverSelector');
+            if (driverSelector) {
+                finalDriverId = driverSelector.value;
+                driverName = driverSelector.options[driverSelector.selectedIndex].text;
+                
+                if (finalDriverId == "0") {
+                    showError('Please select a driver from the list.');
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Rating';
+                    return;
+                }
+            }
 
             const formData = new FormData();
+            formData.append('driver_id', finalDriverId);
             formData.append('driver_name', driverName);
             formData.append('rating', selectedRating);
             formData.append('comment', comment);

@@ -51,7 +51,7 @@ $initials = strtoupper(substr($userData['username'], 0, 1));
                 
                 <?php if ($role === 'user'): ?>
                 <span class="nav-section-title">Search</span>
-                <a href="route_map.php" class="nav-link" id="navRoutes">
+                <a href="routes.php" class="nav-link" id="navRoutes">
                     <span class="nav-icon">🛤️</span> Routes
                 </a>
                 <a href="terminals.php" class="nav-link" id="navTODA">

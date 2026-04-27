@@ -13,6 +13,17 @@ $username = $_SESSION['username'] ?? 'User';
 $role = $_SESSION['role'] ?? 'user';
 $userStatus = $_SESSION['status'] ?? 'pending';
 $isVerified = ($userStatus === 'verified');
+$classifications = $_SESSION['classifications'] ?? [];
+$isDriver = false;
+if (is_array($classifications)) {
+    if (in_array('Driver', $classifications)) $isDriver = true;
+}
+
+// Strict Separation: Drivers go to Driver Portal, Commuters stay here
+if ($isDriver) {
+    header("Location: dashboard_driver.php");
+    exit();
+}
 
 // Redirect admins to admin dashboard
 if ($role === 'admin') {
@@ -22,6 +33,12 @@ if ($role === 'admin') {
 
 // Get user initials for avatar
 $initials = strtoupper(substr($username, 0, 1));
+
+require_once 'php/db_connect.php';
+
+// Fetch verified drivers using PostgreSQL JSONB containment operator
+$driversQuery = $conn->query("SELECT id, first_name, last_name, username FROM users WHERE status = 'verified' AND classifications @> '[\"Driver\"]'::jsonb");
+$verifiedDrivers = $driversQuery->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,6 +71,9 @@ $initials = strtoupper(substr($username, 0, 1));
                 </a>
                 <a href="fare_estimator.php" class="nav-link" id="navFare">
                     <span class="nav-icon">💰</span> Fare Estimator
+                </a>
+                <a href="feedback.php" class="nav-link" id="navFeedback">
+                    <span class="nav-icon">⭐</span> Rate a Driver
                 </a>
                 
                 <span class="nav-section-title">Search</span>
@@ -171,7 +191,7 @@ $initials = strtoupper(substr($username, 0, 1));
                                 <span>Find TODA</span>
                             </div>
                             <?php if ($isVerified): ?>
-                            <div class="action-card" id="actionRateDriver" onclick="window.location.href='rate_driver.php'" style="cursor:pointer;">
+                            <div class="action-card" id="actionRateDriver" onclick="window.location.href='feedback.php'" style="cursor:pointer;">
                                 <span class="action-icon">⭐</span>
                                 <span>Rate a Driver</span>
                             </div>
@@ -195,8 +215,19 @@ $initials = strtoupper(substr($username, 0, 1));
                         <?php if ($isVerified): ?>
                         <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
                             <div style="flex:1; min-width:140px;">
-                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Driver Name</label>
-                                <input type="text" id="simDriver" value="Juan Dela Cruz" class="form-control" style="padding:10px 12px; border:1px solid #ddd; border-radius:8px; width:100%; font-family:var(--font-body);">
+                                <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Select Driver</label>
+                                <select id="simDriverId" class="form-control" style="padding:10px 12px; border:1px solid #ddd; border-radius:8px; width:100%; font-family:var(--font-body);">
+                                    <?php foreach ($verifiedDrivers as $d): 
+                                        $dName = ($d['first_name'] || $d['last_name']) ? ($d['first_name'] . ' ' . $d['last_name']) : $d['username'];
+                                    ?>
+                                        <option value="<?php echo $d['id']; ?>" data-name="<?php echo htmlspecialchars($dName); ?>">
+                                            <?php echo htmlspecialchars($dName); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                    <?php if (empty($verifiedDrivers)): ?>
+                                        <option value="0" data-name="Juan Dela Cruz">Juan Dela Cruz (Sample)</option>
+                                    <?php endif; ?>
+                                </select>
                             </div>
                             <div style="flex:1; min-width:140px;">
                                 <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Start Point</label>
@@ -257,17 +288,25 @@ $initials = strtoupper(substr($username, 0, 1));
 
         // End Session button — navigate to rating page with trip data
         document.getElementById('endSessionBtn')?.addEventListener('click', () => {
-            const driver = document.getElementById('simDriver').value.trim();
+            const driverSelect = document.getElementById('simDriverId');
+            const driverId = driverSelect.value;
+            const driverName = driverSelect.options[driverSelect.selectedIndex].getAttribute('data-name');
             const start = document.getElementById('simStart').value.trim();
             const end = document.getElementById('simEnd').value.trim();
             const fare = document.getElementById('simFare').value.trim();
 
-            if (!driver || !start || !end || !fare) {
+            if (!driverName || !start || !end || !fare) {
                 alert('Please fill in all trip details before ending the session.');
                 return;
             }
 
-            const params = new URLSearchParams({ driver, start, end, fare });
+            const params = new URLSearchParams({ 
+                driver_id: driverId, 
+                driver: driverName, 
+                start, 
+                end, 
+                fare 
+            });
             window.location.href = `rate_driver.php?${params.toString()}`;
         });
     </script>

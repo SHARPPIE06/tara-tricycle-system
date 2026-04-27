@@ -70,8 +70,11 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                 </a>
 
                 <span class="nav-section-title">User Account Management</span>
-                <a href="manage_users.php" class="nav-link" id="navUsers">
-                    <span class="nav-icon">👥</span> Manage Users
+                <a href="manage_users.php?type=commuter" class="nav-link" id="navCommuters">
+                    <span class="nav-icon">👥</span> Manage Commuters
+                </a>
+                <a href="manage_users.php?type=driver" class="nav-link" id="navDrivers">
+                    <span class="nav-icon">🚗</span> Manage Drivers
                     <?php if($pendingCount > 0): ?>
                         <span class="nav-badge" style="background:#f87171; color:white; font-size:0.65rem; padding:2px 6px; border-radius:10px; margin-left:auto; font-weight:700;"><?php echo $pendingCount; ?></span>
                     <?php endif; ?>
@@ -125,14 +128,14 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
             <div class="page-content">
                 <!-- Stats -->
                 <div class="stats-grid">
-                    <a href="manage_users.php" class="stat-card" style="text-decoration:none; color:inherit;">
+                    <a href="manage_users.php?type=commuter" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon blue">👥</div>
                         <div class="stat-info">
                             <h3><?php echo $userCount; ?></h3>
                             <p>Total Users</p>
                         </div>
                     </a>
-                    <a href="manage_users.php" class="stat-card" style="text-decoration:none; color:inherit;">
+                    <a href="manage_users.php?type=driver" class="stat-card" style="text-decoration:none; color:inherit;">
                         <div class="stat-icon" style="background:rgba(251,191,36,0.1);color:#f59e0b;">⏳</div>
                         <div class="stat-info">
                             <h3><?php echo $pendingCount; ?></h3>

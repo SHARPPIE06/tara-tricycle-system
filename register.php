@@ -43,7 +43,7 @@
                         <div class="form-grid-2">
                             <div class="form-group">
                                 <label for="age">Age</label>
-                                <input type="number" id="age" name="age" class="form-control" required min="1">
+                                <input type="number" id="age" name="age" class="form-control" required min="1" readonly style="background-color: #f3f4f6; cursor: not-allowed;" placeholder="Auto-calculated">
                             </div>
                             <div class="form-group">
                                 <label for="birthdate">Birthdate</label>
@@ -211,6 +211,28 @@
             checkboxes.forEach(cb => {
                 cb.addEventListener('change', updateForm);
             });
+            // Auto-calculate age from birthdate
+            const birthdateInput = document.getElementById('birthdate');
+            const ageInput = document.getElementById('age');
+            
+            if (birthdateInput && ageInput) {
+                birthdateInput.addEventListener('change', function() {
+                    if (this.value) {
+                        const dob = new Date(this.value);
+                        const today = new Date();
+                        let age = today.getFullYear() - dob.getFullYear();
+                        const m = today.getMonth() - dob.getMonth();
+                        
+                        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                            age--;
+                        }
+                        
+                        ageInput.value = age >= 0 ? age : '';
+                    } else {
+                        ageInput.value = '';
+                    }
+                });
+            }
         });
     </script>
 </body>

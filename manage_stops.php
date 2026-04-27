@@ -62,8 +62,11 @@ $initials = strtoupper(substr($username, 0, 1));
                 </a>
 
                 <span class="nav-section-title">User Account Management</span>
-                <a href="manage_users.php" class="nav-link" id="navUsers">
-                    <span class="nav-icon">&#x1F465;</span> Manage Users
+                <a href="manage_users.php?type=commuter" class="nav-link" id="navCommuters">
+                    <span class="nav-icon">👥</span> Manage Commuters
+                </a>
+                <a href="manage_users.php?type=driver" class="nav-link" id="navDrivers">
+                    <span class="nav-icon">🚗</span> Manage Drivers
                 </a>
 
                 <span class="nav-section-title">Routes &amp; Fare Management</span>

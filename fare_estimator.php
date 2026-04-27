@@ -216,7 +216,7 @@ $classifications = $_SESSION['classifications'] ?? [];
                 if(routeLine) map.removeLayer(routeLine);
                 if(terminalMarker && destMarker) {
                     const latlngs = [terminalMarker.getLatLng(), destMarker.getLatLng()];
-                    routeLine = L.polyline(latlngs, {color: '#E87F24', weight: 4, dashArray: '5, 10'}).addTo(map);
+                    routeLine = L.polyline(latlngs, {color: '#2563eb', weight: 4, dashArray: '5, 10'}).addTo(map);
                     map.fitBounds(routeLine.getBounds(), {padding: [50, 50]});
                 }
             }

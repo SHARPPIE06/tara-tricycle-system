@@ -18,15 +18,30 @@ require_once 'php/db_connect.php';
 // Handle success/error messages
 $successMsg = $_GET['success'] ?? '';
 $errorMsg = $_GET['error'] ?? '';
+$typeFilter = $_GET['type'] ?? 'all'; // all, driver, commuter
 
-// Fetch all users with extended fields
-$users = $conn->query("SELECT id, username, first_name, middle_name, last_name, age, birthdate, email, role, status, classifications, toda_name, home_address, member_number, id_documents, created_at FROM users ORDER BY created_at DESC");
+// Build query based on type
+$whereClause = "";
+$title = "User Management";
 
-// Counts for status filters
-$pendingCount = $conn->query("SELECT COUNT(*) as c FROM users WHERE status = 'pending'")->fetch(PDO::FETCH_ASSOC)['c'];
-$verifiedCount = $conn->query("SELECT COUNT(*) as c FROM users WHERE status = 'verified'")->fetch(PDO::FETCH_ASSOC)['c'];
-$rejectedCount = $conn->query("SELECT COUNT(*) as c FROM users WHERE status = 'rejected'")->fetch(PDO::FETCH_ASSOC)['c'];
-$totalCount = $conn->query("SELECT COUNT(*) as c FROM users")->fetch(PDO::FETCH_ASSOC)['c'];
+if ($typeFilter === 'driver') {
+    $whereClause = "WHERE classifications @> '[\"Driver\"]'::jsonb";
+    $title = "Manage Drivers";
+} elseif ($typeFilter === 'commuter') {
+    $whereClause = "WHERE NOT (classifications @> '[\"Driver\"]'::jsonb)";
+    $title = "Manage Commuters";
+}
+
+// Fetch users
+$usersQuery = "SELECT * FROM users $whereClause ORDER BY created_at DESC";
+$users = $conn->query($usersQuery);
+
+// Counts for status filters (within the filtered type if applicable)
+$countWhere = $whereClause ? "$whereClause AND " : "WHERE ";
+$pendingCount = $conn->query("SELECT COUNT(*) as c FROM users " . ($whereClause ? "$whereClause AND " : "WHERE ") . "status = 'pending'")->fetch(PDO::FETCH_ASSOC)['c'];
+$verifiedCount = $conn->query("SELECT COUNT(*) as c FROM users " . ($whereClause ? "$whereClause AND " : "WHERE ") . "status = 'verified'")->fetch(PDO::FETCH_ASSOC)['c'];
+$rejectedCount = $conn->query("SELECT COUNT(*) as c FROM users " . ($whereClause ? "$whereClause AND " : "WHERE ") . "status = 'rejected'")->fetch(PDO::FETCH_ASSOC)['c'];
+$totalCount = $conn->query("SELECT COUNT(*) as c FROM users " . ($whereClause ?: ""))->fetch(PDO::FETCH_ASSOC)['c'];
 
 $username = $_SESSION['username'] ?? 'Admin';
 $initials = strtoupper(substr($username, 0, 1));
@@ -238,8 +253,11 @@ $initials = strtoupper(substr($username, 0, 1));
                 </a>
 
                 <span class="nav-section-title">User Account Management</span>
-                <a href="manage_users.php" class="nav-link active" id="navUsers">
-                    <span class="nav-icon">&#x1F465;</span> Manage Users
+                <a href="manage_users.php?type=commuter" class="nav-link <?php echo $typeFilter === 'commuter' ? 'active' : ''; ?>" id="navCommuters">
+                    <span class="nav-icon">👥</span> Manage Commuters
+                </a>
+                <a href="manage_users.php?type=driver" class="nav-link <?php echo $typeFilter === 'driver' ? 'active' : ''; ?>" id="navDrivers">
+                    <span class="nav-icon">🚗</span> Manage Drivers
                 </a>
 
                 <span class="nav-section-title">Routes &amp; Fare Management</span>
@@ -272,7 +290,7 @@ $initials = strtoupper(substr($username, 0, 1));
             <header class="top-bar">
                 <div style="display:flex;align-items:center;gap:12px;">
                     <button class="sidebar-toggle" id="sidebarToggle">☰</button>
-                    <h2>User Management</h2>
+                    <h2><?php echo $title; ?></h2>
                 </div>
                 <div class="user-info">
                     <div class="user-name"><?php echo htmlspecialchars($username); ?></div>

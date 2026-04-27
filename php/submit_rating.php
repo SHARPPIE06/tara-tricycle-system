@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $userId = $_SESSION['user_id'];
+$driverId = (int)($_POST['driver_id'] ?? 0);
 $driverName = trim($_POST['driver_name'] ?? '');
 $rating = (int)($_POST['rating'] ?? 0);
 $comment = trim($_POST['comment'] ?? '');
@@ -51,9 +52,16 @@ if ($tip > 0) {
 }
 
 try {
-    $stmt = $conn->prepare("INSERT INTO reviews (user_id, driver_name, rating, comment, is_read) VALUES (?, ?, ?, ?, 0)");
+    // Insert with driver_id if provided (greater than 0)
+    if ($driverId > 0) {
+        $stmt = $conn->prepare("INSERT INTO reviews (user_id, driver_id, driver_name, rating, comment, is_read) VALUES (?, ?, ?, ?, ?, 0)");
+        $success = $stmt->execute([$userId, $driverId, $driverName, $rating, $comment]);
+    } else {
+        $stmt = $conn->prepare("INSERT INTO reviews (user_id, driver_name, rating, comment, is_read) VALUES (?, ?, ?, ?, 0)");
+        $success = $stmt->execute([$userId, $driverName, $rating, $comment]);
+    }
     
-    if ($stmt->execute([$userId, $driverName, $rating, $comment])) {
+    if ($success) {
         echo json_encode(['success' => true]);
     } else {
         echo json_encode(['success' => false, 'error' => 'Database error. Please try again.']);

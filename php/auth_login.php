@@ -33,13 +33,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
             $_SESSION['status'] = $user['status'] ?? 'pending';
-            $_SESSION['classifications'] = $user['classifications'] ? json_decode($user['classifications'], true) : [];
             
-            // Redirect based on role
+            // Handle classifications robustly
+            $classRaw = $user['classifications'];
+            $classifications = [];
+            if (is_string($classRaw)) {
+                $classifications = json_decode($classRaw, true) ?: [];
+            } elseif (is_array($classRaw)) {
+                $classifications = $classRaw;
+            }
+            $_SESSION['classifications'] = $classifications;
+            
+            // Redirect based on role and classification
             if ($user['role'] === 'admin') {
                 header("Location: ../dashboard_admin.php");
             } else {
-                header("Location: ../dashboard_user.php");
+                if (in_array('Driver', $classifications)) {
+                    header("Location: ../dashboard_driver.php");
+                } else {
+                    header("Location: ../dashboard_user.php");
+                }
             }
             exit();
         } else {
