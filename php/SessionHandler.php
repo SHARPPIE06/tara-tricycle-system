@@ -43,4 +43,3 @@ class MySQLSessionHandler implements SessionHandlerInterface {
         return $stmt->rowCount();
     }
 }
-?>
