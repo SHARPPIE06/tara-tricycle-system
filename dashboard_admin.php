@@ -199,12 +199,12 @@ $pwdEnabled = $settings['pwd_discount_enabled'] ?? '0';
                                         <td><strong><?php echo htmlspecialchars($row['username']); ?></strong></td>
                                         <td>
                                             <small><?php echo htmlspecialchars($row['driver_name'] ?: 'N/A'); ?></small>
-                                            <small style="display:block; color:#666;"><?php echo htmlspecialchars($row['toda_name']); ?></small>
+                                            <small style="display:block; color:#666;"><?php echo htmlspecialchars($row['toda_name'] ?? ''); ?></small>
                                         </td>
                                         <td style="color:var(--yellow);">
                                             <?php echo str_repeat('★', $row['rating']); ?>
                                         </td>
-                                        <td><small><?php echo htmlspecialchars(substr($row['comment'], 0, 50)) . (strlen($row['comment']) > 50 ? '...' : ''); ?></small></td>
+                                        <td><small><?php echo htmlspecialchars(substr($row['comment'] ?? '', 0, 50)) . (strlen($row['comment'] ?? '') > 50 ? '...' : ''); ?></small></td>
                                         <td>
                                             <?php if($row['is_read'] == 0): ?>
                                                 <span class="badge badge-pending">New</span>

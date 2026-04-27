@@ -220,8 +220,8 @@ $verifiedDrivers = $driversQuery->fetchAll(PDO::FETCH_ASSOC);
                                     <?php foreach ($verifiedDrivers as $d): 
                                         $dName = ($d['first_name'] || $d['last_name']) ? ($d['first_name'] . ' ' . $d['last_name']) : $d['username'];
                                     ?>
-                                        <option value="<?php echo $d['id']; ?>" data-name="<?php echo htmlspecialchars($dName); ?>">
-                                            <?php echo htmlspecialchars($dName); ?>
+                                        <option value="<?php echo $d['id']; ?>" data-name="<?php echo htmlspecialchars($dName ?? ''); ?>">
+                                            <?php echo htmlspecialchars($dName ?? ''); ?>
                                         </option>
                                     <?php endforeach; ?>
                                     <?php if (empty($verifiedDrivers)): ?>

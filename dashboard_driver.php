@@ -230,7 +230,7 @@ $initials = strtoupper(substr($username, 0, 1));
                                 <tr>
                                     <td><strong><?php echo htmlspecialchars($rev['reviewer_name'] ?: 'Anonymous'); ?></strong></td>
                                     <td style="color:var(--yellow);"><?php echo str_repeat('★', $rev['rating']); ?></td>
-                                    <td style="font-size:0.85rem;"><?php echo htmlspecialchars($rev['comment']); ?></td>
+                                    <td style="font-size:0.85rem;"><?php echo htmlspecialchars($rev['comment'] ?? ''); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                                 <?php if (empty($recentReviews)): ?>

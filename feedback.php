@@ -167,8 +167,8 @@ if ($role === 'admin') {
                                         <?php foreach ($verifiedDrivers as $d): 
                                             $dName = ($d['first_name'] || $d['last_name']) ? ($d['first_name'] . ' ' . $d['last_name']) : $d['username'];
                                         ?>
-                                            <option value="<?php echo $d['id']; ?>" data-name="<?php echo htmlspecialchars($dName); ?>">
-                                                <?php echo htmlspecialchars($dName); ?>
+                                            <option value="<?php echo $d['id']; ?>" data-name="<?php echo htmlspecialchars($dName ?? ''); ?>">
+                                                <?php echo htmlspecialchars($dName ?? ''); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -179,7 +179,7 @@ if ($role === 'admin') {
                                     <select name="route_id" class="form-control" required>
                                         <option value="">Select Route</option>
                                         <?php while($row = $routes->fetch(PDO::FETCH_ASSOC)): ?>
-                                            <option value="<?php echo $row['id']; ?>"><?php echo htmlspecialchars($row['toda_name']); ?></option>
+                                            <option value="<?php echo $row['id']; ?>"><?php echo htmlspecialchars($row['toda_name'] ?? ''); ?></option>
                                         <?php endwhile; ?>
                                     </select>
                                 </div>
@@ -224,17 +224,17 @@ if ($role === 'admin') {
                                                     <strong style="display:block;"><?php echo htmlspecialchars($row['reviewer_name'] ?: 'Anonymous Commuter'); ?></strong>
                                                 <?php else: ?>
                                                     <strong style="display:block;"><?php echo htmlspecialchars($row['driver_name'] ?: 'Unknown Driver'); ?></strong>
-                                                    <small style="color:#666;"><?php echo htmlspecialchars($row['toda_name']); ?></small>
+                                                    <small style="color:#666;"><?php echo htmlspecialchars($row['toda_name'] ?? ''); ?></small>
                                                 <?php endif; ?>
                                                 
                                                 <?php if($role === 'admin'): ?>
-                                                    <small style="display:block; color:var(--primary); font-size:0.75rem;">By: <?php echo htmlspecialchars($row['reviewer_name']); ?></small>
+                                                    <small style="display:block; color:var(--primary); font-size:0.75rem;">By: <?php echo htmlspecialchars($row['reviewer_name'] ?? ''); ?></small>
                                                 <?php endif; ?>
                                             </td>
                                             <td style="color:var(--yellow); font-size:1.2rem;">
                                                 <?php echo str_repeat('★', $row['rating']) . str_repeat('☆', 5 - $row['rating']); ?>
                                             </td>
-                                            <td><?php echo htmlspecialchars($row['comment']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['comment'] ?? ''); ?></td>
                                         </tr>
                                         <?php endwhile; ?>
                                     <?php else: ?>
